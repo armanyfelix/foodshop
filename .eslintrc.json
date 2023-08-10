@@ -1,3 +1,30 @@
 {
-  "extends": "next/core-web-vitals"
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:storybook/recommended",
+    "plugin:@next/next/recommended",
+    "prettier"
+  ],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "plugins": ["prettier"],
+  "rules": {
+    "prettier/prettier": "error",
+    "valid-jsdoc": "off",
+    "require-jsdoc": "off",
+    "react/no-unescaped-entities": 0
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    // Allows for the parsing of modern ECMAScript features
+    "ecmaVersion": 2022,
+    // Allows for the use of imports
+    "sourceType": "module"
+  }
 }
