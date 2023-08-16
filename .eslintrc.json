@@ -1,4 +1,5 @@
 {
+  "root": true,
   "parser": "@typescript-eslint/parser",
   "extends": [
     "next/core-web-vitals",
@@ -11,7 +12,7 @@
       "version": "detect"
     }
   },
-  "plugins": ["prettier"],
+  "plugins": ["prettier", "testing-library"],
   "rules": {
     "prettier/prettier": "error",
     "valid-jsdoc": "off",
@@ -26,5 +27,12 @@
     "ecmaVersion": 2022,
     // Allows for the use of imports
     "sourceType": "module"
-  }
+  },
+  "overrides": [
+    // Only uses Testing Library lint rules in test files
+    {
+      "files": ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
+      "extends": ["plugin:testing-library/react"]
+    }
+  ]
 }
