@@ -3,6 +3,30 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export interface Database {
   public: {
     Tables: {
+      calories: {
+        Row: {
+          created_at: string
+          id: number
+          img: string | null
+          name: string | null
+          types: Json | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          img?: string | null
+          name?: string | null
+          types?: Json | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          img?: string | null
+          name?: string | null
+          types?: Json | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

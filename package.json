@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -15,7 +15,7 @@
     "prepare": "husky install",
     "cypress": "cypress open",
     "test": "jest --watch",
-    "update-types": "npx supabase gen types typescript --project-id \"uuypcueeqdetjykvktxi\" > types/supabase.ts"
+    "database-types": "npx supabase gen types typescript --project-id \"uuypcueeqdetjykvktxi\" > ./src/lib/database.types.ts"
   },
   "dependencies": {
     "@nextui-org/react": "^2.0.19",

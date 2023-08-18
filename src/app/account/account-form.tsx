@@ -1,7 +1,7 @@
 'use client'
 import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useCallback, useEffect, useState } from 'react'
-import { Database } from '../../../types/supabase'
+import { Database } from '../../lib/database.types'
 import Avatar from './avatar'
 
 export default function AccountForm({ session }: { session: Session | null }) {

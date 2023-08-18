@@ -2,7 +2,7 @@
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
-import { Database } from '../../../types/supabase'
+import { Database } from '../../lib/database.types'
 type Profiles = Database['public']['Tables']['profiles']['Row']
 
 export default function Avatar({
