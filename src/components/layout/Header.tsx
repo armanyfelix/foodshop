@@ -4,19 +4,18 @@ import {
   Button,
   Link,
   Navbar,
-  NavbarBrand,
   NavbarContent,
   NavbarItem,
   NavbarMenu,
   NavbarMenuItem,
   NavbarMenuToggle,
 } from '@nextui-org/react'
-import Image from 'next/image'
+import { useTheme } from 'next-themes'
 import { useState } from 'react'
-import logo from '../../../public/logo_white.png'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState<Boolean>(false)
+  const { theme, setTheme } = useTheme()
 
   const menuItems = [
     'Profile',
@@ -30,17 +29,19 @@ export default function Header() {
   ]
 
   return (
-    <Navbar onMenuOpenChange={setIsMenuOpen} className="bg-black">
+    <Navbar onMenuOpenChange={setIsMenuOpen}>
       <NavbarContent>
         <NavbarMenuToggle aria-label={isMenuOpen ? 'Close menu' : 'Open menu'} className="sm:hidden" />
       </NavbarContent>
-      <NavbarContent justify="center">
+      {/* <NavbarContent justify="center">
         <NavbarBrand>
           <Link href="/">
-            <Image src={logo} alt="fooshop" width={50} height={50} />
+            {theme && (
+              <Image src={theme === 'dark' ? logoLight : logoDark} alt="fooshop" width={50} height={50} />
+            )}
           </Link>
         </NavbarBrand>
-      </NavbarContent>
+      </NavbarContent> */}
       <NavbarContent className="hidden gap-4 sm:flex" justify="center">
         <NavbarItem>
           <Link color="foreground" href="#">
@@ -49,7 +50,7 @@ export default function Header() {
         </NavbarItem>
         <NavbarItem isActive>
           <Link href="#" aria-current="page">
-            History
+            Orders
           </Link>
         </NavbarItem>
         <NavbarItem>

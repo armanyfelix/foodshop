@@ -6,7 +6,7 @@ export default function Auth() {
       <div className="mb-5">
         <h1 className="text-center text-4xl">Registrate</h1>
       </div>
-      <div>
+      <div suppressHydrationWarning>
         <AuthForm />
       </div>
     </div>
