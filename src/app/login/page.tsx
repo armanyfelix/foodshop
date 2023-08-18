@@ -39,13 +39,13 @@ export default function Login() {
   // }
 
   const handleSignIn = async () => {
-    if (validationEmail === 'valid' && validationPassword === 'valid') {
-      await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-      router.refresh()
-    }
+    // if (validationEmail === 'valid' && validationPassword === 'valid') {
+    await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+    router.refresh()
+    // }
   }
 
   return (

@@ -1,6 +1,8 @@
 'use client'
 
 import {
+  Avatar,
+  AvatarIcon,
   Button,
   Link,
   Navbar,
@@ -13,15 +15,16 @@ import {
 } from '@nextui-org/react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 // import { useTheme } from 'next-themes'
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 // import logoDark from '../../../public/logo_dark.png'
-import logoLight from '../../../public/logo_light.png'
-
 import type { Database } from '@/lib/database.types'
 
-export default function Header() {
+interface Props {
+  session: object
+}
+
+export default function Header({ session }: Props) {
   const [isMenuOpen, setIsMenuOpen] = useState<Boolean>(false)
   // const { theme, setTheme } = useTheme()
   const router = useRouter()
@@ -50,9 +53,10 @@ export default function Header() {
       <NavbarContent justify="center">
         <Link href="/">
           <NavbarBrand>
-            {/* {theme && ( */}
-            <Image src={logoLight} alt="fooshop" width={50} height={50} />
-            {/* )} */}
+            {/* <Image src={logoLight} alt="fooshop" width={50} height={50} /> */}
+            <h1 className="-500 bg-gradient-to-br from-indigo-400 to-orange-500 bg-clip-text font-mono text-xl font-bold text-transparent">
+              FOODSHOP
+            </h1>
           </NavbarBrand>
         </Link>
       </NavbarContent>
@@ -74,14 +78,27 @@ export default function Header() {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
-        <NavbarItem className="hidden lg:flex">
-          <Link href="/login">Login</Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Button as={Link} color="primary" href="/signup" variant="flat">
-            Sign Up
-          </Button>
-        </NavbarItem>
+        {session ? (
+          <Avatar
+            size="sm"
+            icon={<AvatarIcon />}
+            classNames={{
+              base: 'bg-zinc-400',
+              icon: 'text-black',
+            }}
+          />
+        ) : (
+          <>
+            <NavbarItem className="hidden lg:flex">
+              <Link href="/login">Login</Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Button as={Link} color="primary" href="/signup" variant="flat">
+                Sign Up
+              </Button>
+            </NavbarItem>
+          </>
+        )}
       </NavbarContent>
       <NavbarMenu>
         {menuItems.map((item, index) => (

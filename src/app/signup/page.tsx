@@ -28,16 +28,16 @@ export default function Login() {
   }, [email])
 
   const handleSignUp = async () => {
-    if (validationEmail === 'valid' && validationPassword === 'valid') {
-      await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${location.origin}/auth/callback`,
-        },
-      })
-      router.refresh()
-    }
+    // if (validationEmail === 'valid' && validationPassword === 'valid') {
+    await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${location.origin}/auth/callback`,
+      },
+    })
+    router.refresh()
+    // }
   }
 
   return (
