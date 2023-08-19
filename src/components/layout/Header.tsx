@@ -21,7 +21,7 @@ import { useState } from 'react'
 import type { Database } from '@/lib/database.types'
 
 interface Props {
-  session: object
+  session: object | null
 }
 
 export default function Header({ session }: Props) {
@@ -109,9 +109,9 @@ export default function Header({ session }: Props) {
           </NavbarMenuItem>
         ))}
         <NavbarMenuItem>
-          <Link color="danger" className="w-full" href="#" size="lg">
+          <button type="button" className="text-danger" onClick={handleSignOut}>
             Log out
-          </Link>
+          </button>
         </NavbarMenuItem>
       </NavbarMenu>
     </Navbar>

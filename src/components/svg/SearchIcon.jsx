@@ -1,22 +1,29 @@
 export default function SearchIcon(props) {
   return (
-    <svg width="1em" height="1em" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" {...props}>
-      <mask id="ipSSearch0">
-        <g fill="none" strokeLinejoin="round" strokeWidth="4">
-          <path
-            fill="#fff"
-            stroke="#fff"
-            d="M21 38c9.389 0 17-7.611 17-17S30.389 4 21 4S4 11.611 4 21s7.611 17 17 17Z"
-          ></path>
-          <path
-            stroke="#000"
-            strokeLinecap="round"
-            d="M26.657 14.343A7.975 7.975 0 0 0 21 12a7.975 7.975 0 0 0-5.657 2.343"
-          ></path>
-          <path stroke="#fff" strokeLinecap="round" d="m33.222 33.222l8.485 8.485"></path>
-        </g>
-      </mask>
-      <path fill="#000000" d="M0 0h48v48H0z" mask="url(#ipSSearch0)"></path>
+    <svg
+      aria-hidden="true"
+      fill="none"
+      focusable="false"
+      height="1em"
+      role="presentation"
+      viewBox="0 0 24 24"
+      width="1em"
+      {...props}
+    >
+      <path
+        d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+      <path
+        d="M22 22L20 20"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
     </svg>
   )
 }
