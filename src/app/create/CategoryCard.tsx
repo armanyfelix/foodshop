@@ -28,12 +28,7 @@ interface Props {
 
 export default function CategoryCard({ item, handleOpen }: Props) {
   return (
-    <Card
-      isFooterBlurred
-      isPressable
-      onPress={() => handleOpen(item)}
-      className="col-span-12 h-[233px] w-full sm:col-span-7"
-    >
+    <Card isFooterBlurred isPressable onPress={() => handleOpen(item)} className="h-[233px]">
       <Image
         removeWrapper
         alt="Relaxing app background"

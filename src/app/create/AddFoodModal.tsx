@@ -1,7 +1,16 @@
-import { Button, Divider, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react'
+import {
+  Button,
+  Divider,
+  Image,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+} from '@nextui-org/react'
 import FoodCard from './FoodCard'
 
-interface Item {
+interface Selected {
   name: string
   description: string
   image: string
@@ -23,63 +32,59 @@ interface Item {
 interface Props {
   isOpen: boolean
   onClose: () => void
-  calorie: {
+  main: {
     name: string
     description: string
     image: string
-    types: {
-      name: string
-      description: string
-      image: string
-      calorie: number
-      protein: number
-      fat: number
-      prices: {
-        sizes: {
-          small: number | null
-          medium: number | null
-          large: number | null
-        }
-        liter: number | null
-        kilo: number | null
-        piece: number | null
-      }
-    }[]
+    types: Selected[]
   }
-  type: Item
+  selected: Selected
+  setSelected: (selected: Selected) => void
 }
 
-export default function AddFoodModal({ isOpen, onClose, calorie, type }: Props) {
+export default function AddFoodModal({ isOpen, onClose, main, selected, setSelected }: Props) {
   return (
     <Modal
       size="full"
       isOpen={isOpen}
+      scrollBehavior="inside"
       onClose={onClose}
       classNames={{
-        closeButton: 'bg-black',
+        closeButton: 'bg-white text-black m-3',
+        base: 'bg-black',
       }}
     >
       <ModalContent>
         {(onClose) => (
           <>
             <ModalHeader
-              className={`flex h-[240px] flex-col gap-1 bg-cover text-xl`}
-              style={{ backgroundImage: `url(/images/calories/${calorie?.image})` }}
+              className={`flex  flex-col gap-1 bg-cover text-xl`}
+              // style={{ backgroundImage: `url(/images/calories/${main?.image})` }}
             >
-              {calorie?.name}
-              {/* <Image
-                          shadow="sm"
-                          // radius="lg"
-                          width="100%"
-                          alt={carbs?.title}
-                          className="object-cov h-[240px] w-full"
-                          src={carbs?.img}
-                        /> */}
+              {main?.name}
+              {selected && (
+                <Image
+                  shadow="sm"
+                  // radius="lg"
+                  width="100%"
+                  alt={selected.name}
+                  className="mt-4 h-[240px] w-full object-cover"
+                  src={`/images/calories/${main.name.toLowerCase()}/${selected.image}`}
+                />
+              )}
             </ModalHeader>
-            <ModalBody className="pt-6">
-              {calorie.types?.map((item: Item, index) => (
-                <FoodCard key={`${item.name}_${index}`} item={item} />
-              ))}
+            <ModalBody>
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                {!selected &&
+                  main.types?.map((type: Selected, index: any) => (
+                    <FoodCard
+                      key={`${type.name}_${index}`}
+                      type={type}
+                      categoryName={main.name}
+                      setSelected={setSelected}
+                    />
+                  ))}
+              </div>
               {/* <Dropdown
                         showArrow
                         classNames={{
@@ -117,23 +122,24 @@ export default function AddFoodModal({ isOpen, onClose, calorie, type }: Props) 
                           </DropdownSection>
                         </DropdownMenu>
                       </Dropdown> */}
-              {type && (
+              {selected && (
                 <div className="p-2">
-                  <div className="mb-4">
-                    <p>{type.description}</p>
+                  <div className="">
+                    <h1 className="text-3xl font-bold ">{selected.name}</h1>
+                    <p>{selected.description}</p>
                     {/* <h1 className="text-2xl">{type.price}</h1> */}
                   </div>
                   <Divider />
                   {/* <h3 className="mt-4">Nutrition</h3> */}
                   <div className="mt-4 flex h-full flex-col justify-center space-y-4">
                     <p>
-                      <b>Calorie:</b> {type.calorie}
+                      <b>Calorie:</b> {selected.calorie}
                     </p>
                     <p>
-                      <b>Protein:</b> {type.protein}
+                      <b>Protein:</b> {selected.protein}
                     </p>
                     <p>
-                      <b>Fat:</b> {type.fat}
+                      <b>Fat:</b> {selected.fat}
                     </p>
                   </div>
                   <div className="mx-auto flex w-64 items-center justify-between rounded-full bg-zinc-600">
@@ -149,12 +155,16 @@ export default function AddFoodModal({ isOpen, onClose, calorie, type }: Props) 
               )}
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onClick={onClose}>
-                Cancel
-              </Button>
-              <Button color="primary" onPress={onClose}>
-                Add
-              </Button>
+              {selected && (
+                <>
+                  <Button color="danger" variant="light" onClick={onClose}>
+                    Cancel
+                  </Button>
+                  <Button color="primary" onPress={onClose}>
+                    Add
+                  </Button>
+                </>
+              )}
             </ModalFooter>
           </>
         )}

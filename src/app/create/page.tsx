@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react'
 import AddFoodModal from './AddFoodModal'
 import CategoryCard from './CategoryCard'
 
-interface Calorie {
+interface Main {
   name: string
   description: string
   image: string
@@ -32,7 +32,7 @@ interface Calorie {
 export default function Create() {
   const calories = [
     {
-      name: 'Bread',
+      name: 'Breads',
       description: 'This is a bread',
       image: 'breads.jpg',
       types: [
@@ -129,7 +129,7 @@ export default function Create() {
       ],
     },
     {
-      name: 'Rice',
+      name: 'Rices',
       description: 'This is a bread',
       image: 'rices.jpg',
       types: [
@@ -287,7 +287,7 @@ export default function Create() {
       ],
     },
     {
-      name: 'Salad',
+      name: 'Salads',
       description: 'This is a bread',
       image: 'salads.jpg',
       types: [
@@ -366,7 +366,7 @@ export default function Create() {
       ],
     },
     {
-      name: 'Pasta',
+      name: 'Pastas',
       description: 'This is a bread',
       image: 'pastas.jpg',
       types: [
@@ -517,7 +517,7 @@ export default function Create() {
       ],
     },
     {
-      name: 'Soup',
+      name: 'Soups',
       description: 'This is a bread',
       image: 'soups.jpg',
       types: [
@@ -688,8 +688,8 @@ export default function Create() {
   ]
 
   const [order, setOrder] = useState<any>()
-  const [calorie, setCalorie] = useState<Calorie>({} as Calorie)
-  const [type, setType] = useState<any>()
+  const [main, setMain] = useState<Main>({} as Main)
+  const [selected, setSelected] = useState<any>(null)
   const [selectedKeys, setSelectedKeys] = useState<any>(new Set(['']))
 
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -701,20 +701,30 @@ export default function Create() {
 
   const handleOpen = (item: any) => {
     setSelectedKeys(new Set(['']))
-    setCalorie(item)
+    setMain(item)
+    setSelected(null)
     onOpen()
   }
 
   return (
-    <div className="p-3">
+    <div className="min-h-screen p-3">
       <Tabs aria-label="Options" className="w-full justify-center">
         <Tab key="calorie" title="Calorie">
+          <div>
+            <h1>Select the main ingredient of your dish and decide what kind of dish you want</h1>
+          </div>
           <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
             {calories.map((item, index) => (
               <CategoryCard item={item} key={index} handleOpen={handleOpen} />
             ))}
           </div>
-          <AddFoodModal isOpen={isOpen} onClose={onClose} calorie={calorie} type={type} />
+          <AddFoodModal
+            isOpen={isOpen}
+            onClose={onClose}
+            main={main}
+            setSelected={setSelected}
+            selected={selected}
+          />
         </Tab>
         <Tab key="protein" title="Protein">
           <Card>
