@@ -1,333 +1,695 @@
 'use client'
 
-import {
-  Button,
-  Card,
-  CardBody,
-  Divider,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  Tab,
-  Tabs,
-  useDisclosure,
-} from '@nextui-org/react'
+import { Card, CardBody, Tab, Tabs, useDisclosure } from '@nextui-org/react'
 import { useMemo, useState } from 'react'
-import IngredientCard from './IngredientCard'
+import AddFoodModal from './AddFoodModal'
+import CategoryCard from './CategoryCard'
 
 interface Calorie {
   name: string
-  img: string
-  types: any
+  description: string
+  image: string
+  types: {
+    name: string
+    description: string
+    image: string
+    calorie: number
+    protein: number
+    fat: number
+    prices: {
+      sizes: {
+        small: number | null
+        medium: number | null
+        large: number | null
+      }
+      liter: number | null
+      kilo: number | null
+      piece: number | null
+    }
+  }[]
 }
 
 export default function Create() {
   const calories = [
     {
       name: 'Bread',
-      img: 'bread.jpg',
+      description: 'This is a bread',
+      image: 'breads.jpg',
       types: [
         {
           name: 'Burger',
           description: 'This is a burger',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'burger.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'White',
           description: 'This is a white bread',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'white.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
-          name: 'Multigram',
+          name: 'Multigrain',
           description: 'This is a multigram bread',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'multigrain.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'Bagel',
           description: 'This is a bagel',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'bagel.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'Baguette',
           description: 'This is a baguette',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'baguette.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
       ],
     },
     {
       name: 'Rice',
-      img: 'rice.jpg',
+      description: 'This is a bread',
+      image: 'rices.jpg',
       types: [
         {
           name: 'White',
           description: 'This is a white rice',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'white.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'Integral',
           description: 'This is a integral rice',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'integral.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'Fried',
           description: 'This is a fried rice',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'fried.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
+        },
+        {
+          name: 'Red',
+          description: 'This is a red rice',
+          image: 'red.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
       ],
     },
     {
       name: 'Tortillas',
-      img: 'tortillas.jpg',
+      description: 'This is a bread',
+      image: 'tortillas.jpg',
       types: [
         {
           name: 'Corn',
           description: 'This is a corn tortillas',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'corn.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
-          name: 'Corn yellow',
+          name: 'Yellow',
           description: 'This is a corn yellow tortillas',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'yellow.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'flour',
           description: 'This is a flour tortillas',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'flour.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'nopal',
           description: 'This is a nopal tortillas',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'nopal.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
       ],
     },
     {
       name: 'Salad',
-      img: 'salad.jpg',
+      description: 'This is a bread',
+      image: 'salads.jpg',
       types: [
         {
           name: 'lettuce',
           description: 'This is a lettuce salad',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'lettuce.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'Cabbage',
           description: 'This is a cabbage salad',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'cabbage.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'Potato',
           description: 'This is a potato salad',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'potato.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'Mix',
           description: 'This is a mix salad',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'mix.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
       ],
     },
     {
       name: 'Pasta',
-      img: 'pasta.jpg',
+      description: 'This is a bread',
+      image: 'pastas.jpg',
       types: [
         {
           name: 'Spaghetti',
           description: 'This is a spaghetti',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'spaghetti.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
+        },
+        {
+          name: 'Fusilli',
+          description: 'This is a fusilli',
+          image: 'fusilli.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'Chow Mein',
           description: 'This is a chow mein',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'chowmein.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'Soba',
           description: 'This is a soba',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'soba.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
-          name: 'Rice',
+          name: 'Rice noddles',
           description: 'This is a rice',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'ricenoddles.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'Penne',
           description: 'This is a penne',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'penne.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'Macaroni',
           description: 'This is a macaroni',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'macaroni.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'Fettuccine',
           description: 'This is a fettuccine',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'fettuccine.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
       ],
     },
     {
       name: 'Soup',
-      img: 'soup.jpg',
+      description: 'This is a bread',
+      image: 'soups.jpg',
       types: [
         {
           name: 'Chicken',
           description: 'This is a chicken soup',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'chicken.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'Beef',
           description: 'This is a beef soup',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'beef.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'Shrimp',
           description: 'This is a vegetable soup',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'shrimp.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'Tomato',
           description: 'This is a tomato soup',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'tomato.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'Ramen',
           description: 'This is a ramen soup',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'ramen.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'Miso',
           description: 'This is a miso soup',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'miso.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
-          name: 'Udon',
+          name: 'Pho',
           description: 'This is a udon soup',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'pho.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'Tortilla',
           description: 'This is a tortilla soup',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'tortilla.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
         {
           name: 'Cheese',
           description: 'This is a cheese soup',
-          calorie: '100',
-          protein: '20',
-          fat: '10',
-          price: '$5.00',
+          image: 'cheese.jpg',
+          calorie: 100,
+          protein: 20,
+          fat: 10,
+          prices: {
+            sizes: {
+              small: 10,
+              medium: 15,
+              large: 20,
+            },
+            liter: 60,
+            kilo: null,
+            piece: null,
+          },
         },
       ],
     },
   ]
 
   const [order, setOrder] = useState<any>()
-  const [calorie, setCalorie] = useState<Calorie>()
+  const [calorie, setCalorie] = useState<Calorie>({} as Calorie)
   const [type, setType] = useState<any>()
-  // const [protein, setProtein] = useState<Object>()
-  // const [fat, setFat] = useState<Object>()
-  // const [vegetables, setVegetables] = useState<Object<{
-  //   name: string
-  //   description: string
-  // }>>()
   const [selectedKeys, setSelectedKeys] = useState<any>(new Set(['']))
 
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -344,120 +706,15 @@ export default function Create() {
   }
 
   return (
-    <div className="h-screen p-6">
+    <div className="p-3">
       <Tabs aria-label="Options" className="w-full justify-center">
         <Tab key="calorie" title="Calorie">
-          <div className="mt-10 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
             {calories.map((item, index) => (
-              <IngredientCard key={index} item={item} handleOpen={handleOpen} />
+              <CategoryCard item={item} key={index} handleOpen={handleOpen} />
             ))}
-            <Modal
-              size="full"
-              isOpen={isOpen}
-              onClose={onClose}
-              classNames={{
-                closeButton: 'bg-black',
-              }}
-            >
-              <ModalContent>
-                {(onClose) => (
-                  <>
-                    <ModalHeader
-                      className={`flex h-[240px] flex-col gap-1 bg-cover text-xl`}
-                      style={{ backgroundImage: `url(/images/${calorie?.img})` }}
-                    >
-                      {calorie?.name}
-                      {/* <Image
-                          shadow="sm"
-                          // radius="lg"
-                          width="100%"
-                          alt={carbs?.title}
-                          className="object-cov h-[240px] w-full"
-                          src={carbs?.img}
-                        /> */}
-                    </ModalHeader>
-                    <ModalBody className="pt-6">
-                      {/* <Dropdown
-                        showArrow
-                        classNames={{
-                          base: 'py-1 px-1 border border-default-200 bg-gradient-to-br from-white to-default-200 dark:from-default-50 dark:to-black',
-                          arrow: 'bg-default-200',
-                        }}
-                      >
-                        <DropdownTrigger>
-                          <Button variant="bordered">
-                            {!selectedValue
-                              ? `Select a type of ${calorie?.name?.toLowerCase()}`
-                              : selectedValue}
-                          </Button>
-                        </DropdownTrigger>
-                        <DropdownMenu
-                          variant="faded"
-                          selectionMode="single"
-                          selectedKeys={selectedKeys}
-                          onSelectionChange={setSelectedKeys}
-                          aria-label="Dropdown menu with description"
-                        >
-                          <DropdownSection title={calorie?.name}>
-                            {calorie?.types?.map((t: any) => (
-                              <DropdownItem
-                                key={t.name}
-                                onClick={() => setType(t)}
-                                description={t.description}
-                                // startContent={
-                                //   <CheckCircleIcon className={iconClasses} />
-                                // }
-                              >
-                                {t.name}
-                              </DropdownItem>
-                            ))}
-                          </DropdownSection>
-                        </DropdownMenu>
-                      </Dropdown> */}
-                      {type && (
-                        <div className="p-2">
-                          <div className="mb-4">
-                            <p>{type.description}</p>
-                            {/* <h1 className="text-2xl">{type.price}</h1> */}
-                          </div>
-                          <Divider />
-                          {/* <h3 className="mt-4">Nutrition</h3> */}
-                          <div className="mt-4 flex h-full flex-col justify-center space-y-4">
-                            <p>
-                              <b>Calorie:</b> {type.calorie}
-                            </p>
-                            <p>
-                              <b>Protein:</b> {type.protein}
-                            </p>
-                            <p>
-                              <b>Fat:</b> {type.fat}
-                            </p>
-                          </div>
-                          <div className="mx-auto flex w-64 items-center justify-between rounded-full bg-zinc-600">
-                            <button className="h-14 w-14 rounded-full text-2xl ease-in hover:bg-zinc-700 active:scale-105 active:bg-zinc-800">
-                              -
-                            </button>
-                            <span>5</span>
-                            <button className="h-14 w-14 rounded-full text-2xl ease-in hover:bg-zinc-700 active:scale-105 active:bg-zinc-800">
-                              +
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button color="danger" variant="light" onClick={onClose}>
-                        Cancel
-                      </Button>
-                      <Button color="primary" onPress={onClose}>
-                        Add
-                      </Button>
-                    </ModalFooter>
-                  </>
-                )}
-              </ModalContent>
-            </Modal>
           </div>
+          <AddFoodModal isOpen={isOpen} onClose={onClose} calorie={calorie} type={type} />
         </Tab>
         <Tab key="protein" title="Protein">
           <Card>

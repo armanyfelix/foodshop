@@ -5,15 +5,27 @@ import { Card, CardBody, CardFooter, Image } from '@nextui-org/react'
 interface Props {
   item: {
     name: string
-    img: string
-    types: Array<object>
+    description: string
+    image: string
+    calorie: number
+    protein: number
+    fat: number
+    prices: {
+      sizes: {
+        small: number | null
+        medium: number | null
+        large: number | null
+      }
+      liter: number | null
+      kilo: number | null
+      piece: number | null
+    }
   }
-  handleOpen: (item: object) => void
 }
 
-export default function IngredientCard({ item, handleOpen }: Props) {
+export default function FoodCard({ item }: Props) {
   return (
-    <Card shadow="sm" isPressable onPress={() => handleOpen(item)}>
+    <Card shadow="sm" isPressable>
       {/* <CardHeader>
         Make some tacos
       </CardHeader> */}
@@ -24,7 +36,7 @@ export default function IngredientCard({ item, handleOpen }: Props) {
           width="100%"
           alt={item.name}
           className="h-[140px] w-full object-cover"
-          src={`/images/${item.img}`}
+          src={`/images/calories/${item.image}`}
         />
       </CardBody>
       <CardFooter className="justify-between text-small">
