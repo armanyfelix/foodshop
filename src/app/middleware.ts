@@ -1,7 +1,7 @@
 import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
 import { NextResponse } from 'next/server'
 
-import type { Database } from '@/lib/database.types'
+import type { Database } from '@/types/database.types'
 import type { NextRequest } from 'next/server'
 
 export async function middleware(req: NextRequest) {

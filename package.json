@@ -18,8 +18,11 @@
     "database-types": "npx supabase gen types typescript --project-id \"uuypcueeqdetjykvktxi\" > ./src/lib/database.types.ts"
   },
   "dependencies": {
+    "@dicebear/collection": "^6.0.4",
+    "@dicebear/core": "^6.0.4",
     "@nextui-org/react": "^2.0.19",
     "@reduxjs/toolkit": "^1.9.5",
+    "@resvg/resvg-js": "^2.4.1",
     "@supabase/auth-helpers-nextjs": "^0.7.4",
     "@supabase/auth-ui-react": "^0.4.2",
     "@supabase/auth-ui-shared": "^0.1.6",

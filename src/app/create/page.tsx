@@ -5,11 +5,6 @@ import {
   Card,
   CardBody,
   Divider,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownSection,
-  DropdownTrigger,
   Modal,
   ModalBody,
   ModalContent,
@@ -29,7 +24,7 @@ interface Calorie {
 }
 
 export default function Create() {
-  const list = [
+  const calories = [
     {
       name: 'Bread',
       img: 'bread.jpg',
@@ -349,11 +344,11 @@ export default function Create() {
   }
 
   return (
-    <div className="p-6">
+    <div className="h-screen p-6">
       <Tabs aria-label="Options" className="w-full justify-center">
         <Tab key="calorie" title="Calorie">
           <div className="mt-10 grid grid-cols-2 gap-2 sm:grid-cols-4">
-            {list.map((item, index) => (
+            {calories.map((item, index) => (
               <IngredientCard key={index} item={item} handleOpen={handleOpen} />
             ))}
             <Modal
@@ -382,7 +377,7 @@ export default function Create() {
                         /> */}
                     </ModalHeader>
                     <ModalBody className="pt-6">
-                      <Dropdown
+                      {/* <Dropdown
                         showArrow
                         classNames={{
                           base: 'py-1 px-1 border border-default-200 bg-gradient-to-br from-white to-default-200 dark:from-default-50 dark:to-black',
@@ -418,7 +413,7 @@ export default function Create() {
                             ))}
                           </DropdownSection>
                         </DropdownMenu>
-                      </Dropdown>
+                      </Dropdown> */}
                       {type && (
                         <div className="p-2">
                           <div className="mb-4">

@@ -1,19 +1,15 @@
 'use client'
 
-import { LockIcon } from '@/components/svg/LockIcon'
-import { MailIcon } from '@/components/svg/MainIcon'
+import { LockIcon } from '@/svg/LockIcon'
+import { MailIcon } from '@/svg/MainIcon'
 import { Button, Input, Link } from '@nextui-org/react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 
-import type { Database } from '@/lib/database.types'
-
-export default function Login() {
+export default function SignIn() {
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const router = useRouter()
-  const supabase = createClientComponentClient<Database>()
 
   const validationEmail = useMemo(() => {
     if (email === '') return undefined
@@ -27,29 +23,22 @@ export default function Login() {
     return password.length > 8 ? 'valid' : 'invalid'
   }, [email])
 
-  // const handleSignUp = async () => {
-  //   await supabase.auth.signUp({
-  //     email,
-  //     password,
-  //     options: {
-  //       emailRedirectTo: `${location.origin}/auth/callback`,
-  //     },
-  //   })
-  //   router.refresh()
-  // }
-
   const handleSignIn = async () => {
-    // if (validationEmail === 'valid' && validationPassword === 'valid') {
-    await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    await fetch('/auth/signin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    }).then
     router.refresh()
-    // }
   }
 
   return (
-    <div className="space-y-4 p-6">
+    <div className="h-screen space-y-4 p-6">
       {/* <input name="email" onChange={(e) => setEmail(e.target.value)} value={email} />
       <input type="password" name="password" onChange={(e) => setPassword(e.target.value)} value={password} />
       <button onClick={handleSignUp}>Sign up</button> */}

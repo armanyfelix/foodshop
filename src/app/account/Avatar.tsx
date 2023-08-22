@@ -2,7 +2,7 @@
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
-import { Database } from '../../lib/database.types'
+import { Database } from '../../types/database.types'
 type Profiles = Database['public']['Tables']['profiles']['Row']
 
 export default function Avatar({
@@ -16,6 +16,7 @@ export default function Avatar({
   size: number
   onUpload: (url: string) => void
 }) {
+  console.log(url)
   const supabase = createClientComponentClient<Database>()
   const [avatarUrl, setAvatarUrl] = useState<Profiles['avatar_url']>(url)
   const [uploading, setUploading] = useState(false)
@@ -23,7 +24,7 @@ export default function Avatar({
   useEffect(() => {
     async function downloadImage(path: string) {
       try {
-        const { data, error } = await supabase.storage.from('avatars').download(path)
+        const { data, error } = await supabase.storage.from('profiles/avatars').download(path)
         if (error) {
           throw error
         }
@@ -50,7 +51,7 @@ export default function Avatar({
       const fileExt = file.name.split('.').pop()
       const filePath = `${uid}-${Math.random()}.${fileExt}`
 
-      let { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file)
+      let { error: uploadError } = await supabase.storage.from('profiles').upload(filePath, file)
 
       if (uploadError) {
         throw uploadError

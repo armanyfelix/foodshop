@@ -1,26 +1,26 @@
 'use client'
 
-import { Button, Input } from '@nextui-org/react'
+import { Input } from '@nextui-org/react'
 import { useChat } from 'ai/react'
-import SearchIcon from './svg/SearchIcon'
+import { useState } from 'react'
+import SearchIcon from '../../svg/SearchIcon'
 
-interface Props {
-  // messages: Array<{ role: string; content: string }>;
-  // input: string;
-  // handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  // handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-}
+interface Props {}
 
-export default function Search({}: Props) {
+export default function AiSearch({}: Props) {
+  const [prompt, setPrompt] = useState<string>('')
   const { messages, input, handleInputChange, handleSubmit } = useChat({
     api: '/api/generate',
   })
   return (
-    <section>
+    <div>
       <form onSubmit={handleSubmit}>
         <Input
           value={input}
-          onChange={handleInputChange}
+          onChange={(e) => {
+            setPrompt(e.target.value)
+            handleInputChange(e)
+          }}
           isClearable
           radius="lg"
           classNames={{
@@ -49,18 +49,18 @@ export default function Search({}: Props) {
             <SearchIcon className="pointer-events-none flex-shrink-0 text-black/50 text-slate-300 dark:text-white/90" />
           }
         />
-        <Button type="submit" color="primary" size="sm" className="ml-2 mt-4">
+        <button type="submit" className={`${prompt ? '' : 'hidden'}`}>
           Search
-        </Button>
+        </button>
       </form>
       <div>
         {messages.map((m, index) => (
-          <li key={index}>
-            {m.role === 'user' ? 'Searching: ' : 'AI: '}
+          <div key={index}>
+            <span className="font-bold ">{m.role === 'user' ? 'Search: ' : 'AI: '}</span>
             {m.content}
-          </li>
+          </div>
         ))}
       </div>
-    </section>
+    </div>
   )
 }

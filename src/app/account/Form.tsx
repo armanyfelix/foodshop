@@ -1,8 +1,9 @@
 'use client'
+
 import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useCallback, useEffect, useState } from 'react'
-import { Database } from '../../lib/database.types'
-import Avatar from './avatar'
+import { Database } from '../../types/database.types'
+import Avatar from './Avatar'
 
 export default function AccountForm({ session }: { session: Session | null }) {
   const supabase = createClientComponentClient<Database>()
@@ -76,15 +77,17 @@ export default function AccountForm({ session }: { session: Session | null }) {
 
   return (
     <div className="form-widget">
-      <Avatar
-        uid={user?.id || ''}
-        url={avatar_url}
-        size={150}
-        onUpload={(url) => {
-          setAvatarUrl(url)
-          updateProfile({ fullname, username, website, avatar_url: url })
-        }}
-      />
+      <div>
+        <Avatar
+          uid={user?.id || ''}
+          url={avatar_url}
+          size={150}
+          onUpload={(url) => {
+            setAvatarUrl(url)
+            updateProfile({ fullname, username, website, avatar_url: url })
+          }}
+        />
+      </div>
       <div>
         <label htmlFor="email">Email</label>
         <input id="email" type="text" value={session?.user.email} disabled />
@@ -123,7 +126,7 @@ export default function AccountForm({ session }: { session: Session | null }) {
       </div>
 
       <div>
-        <form action="/auth/signout" method="post">
+        <form action="/auth/logout" method="post">
           <button className="button block" type="submit">
             Sign out
           </button>

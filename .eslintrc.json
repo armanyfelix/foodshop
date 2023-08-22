@@ -14,6 +14,11 @@
   },
   "plugins": ["prettier", "testing-library"],
   "rules": {
+    "react/prop-types": "off",
+    "react/react-in-jsx-scope": "off",
+    "@typescript-eslint/no-floating-promises": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-misused-promises": "off",
     "prettier/prettier": "error",
     "valid-jsdoc": "off",
     "require-jsdoc": "off",
@@ -23,13 +28,10 @@
     "ecmaFeatures": {
       "jsx": true
     },
-    // Allows for the parsing of modern ECMAScript features
     "ecmaVersion": 2022,
-    // Allows for the use of imports
     "sourceType": "module"
   },
   "overrides": [
-    // Only uses Testing Library lint rules in test files
     {
       "files": ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
       "extends": ["plugin:testing-library/react"]
