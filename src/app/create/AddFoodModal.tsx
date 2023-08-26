@@ -10,13 +10,15 @@ import {
 } from '@nextui-org/react'
 import FoodCard from './FoodCard'
 
-interface Selected {
+interface Ingredient {
   name: string
   description: string
   image: string
   calorie: number
   protein: number
   fat: number
+  type: string
+  category: string
   prices: {
     sizes: {
       small: number | null
@@ -32,17 +34,12 @@ interface Selected {
 interface Props {
   isOpen: boolean
   onClose: () => void
-  main: {
-    name: string
-    description: string
-    image: string
-    types: Selected[]
-  }
-  selected: Selected
-  setSelected: (selected: Selected) => void
+  ingredients: Ingredient[]
+  selected: Ingredient
+  setSelected: (selected: Ingredient) => void
 }
 
-export default function AddFoodModal({ isOpen, onClose, main, selected, setSelected }: Props) {
+export default function AddFoodModal({ isOpen, onClose, ingredients, selected, setSelected }: Props) {
   return (
     <Modal
       size="full"
@@ -51,36 +48,33 @@ export default function AddFoodModal({ isOpen, onClose, main, selected, setSelec
       onClose={onClose}
       classNames={{
         closeButton: 'bg-white text-black m-3',
-        base: 'bg-black',
+        base: 'bg-black max-h-full',
       }}
     >
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader
-              className={`flex  flex-col gap-1 bg-cover text-xl`}
-              // style={{ backgroundImage: `url(/images/calories/${main?.image})` }}
-            >
-              {main?.name}
+            <ModalHeader className={`mt-14 flex flex-col gap-1 bg-cover text-xl`}>
+              {/* {main?.name} */}
               {selected && (
                 <Image
                   shadow="sm"
                   // radius="lg"
                   width="100%"
                   alt={selected.name}
-                  className="mt-4 h-[240px] w-full object-cover"
-                  src={`/images/calories/${main.name.toLowerCase()}/${selected.image}`}
+                  className="h-[240px] w-full object-cover"
+                  src={`/images/${selected.category}s/${selected.type}s/${selected.image}`}
                 />
               )}
             </ModalHeader>
             <ModalBody>
               <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
                 {!selected &&
-                  main.types?.map((type: Selected, index: any) => (
+                  ingredients?.map((ingredient: Ingredient, index: any) => (
                     <FoodCard
-                      key={`${type.name}_${index}`}
-                      type={type}
-                      categoryName={main.name}
+                      key={`${ingredient.name}_${index}`}
+                      ingredient={ingredient}
+                      // categoryName={main.name}
                       setSelected={setSelected}
                     />
                   ))}

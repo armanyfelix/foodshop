@@ -1,8 +1,10 @@
 'use client'
 
-import { Card, CardBody, Tab, Tabs, useDisclosure } from '@nextui-org/react'
+import { Tab, Tabs, useDisclosure } from '@nextui-org/react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useEffect, useMemo, useState } from 'react'
+import { useState } from 'react'
+import AddFoodModal from './AddFoodModal'
+import CategoryCard from './CategoryCard'
 
 interface Ingredient {
   name: string
@@ -11,6 +13,8 @@ interface Ingredient {
   calorie: number
   protein: number
   fat: number
+  type: string
+  category: string
   prices: {
     sizes: {
       small: number | null
@@ -24,79 +28,70 @@ interface Ingredient {
 }
 
 export default function TabsC() {
-  useEffect(() => {
-    async function getIngredients() {
-      try {
-        const supabase = createClientComponentClient()
-        const { ingredientsData }: any = await supabase.from('ingredients').select('*')
-        setIngredients(ingredientsData)
-      } catch {}
-    }
-    getIngredients()
-  }, [])
+  const tabs = [
+    {
+      key: 'grain',
+      title: 'Grains',
+      subtitle: 'Select the base of your dish and decide what kind of dish you want',
+    },
+    {
+      key: 'protein',
+      title: 'Proteins',
+      subtitle: '',
+    },
+    {
+      key: 'vegetable',
+      title: 'Vegetables',
+      subtitle: '',
+    },
+  ]
+  // useEffect(() => {
+  async function getIngredients() {
+    try {
+      const supabase = createClientComponentClient()
+      const { data }: any = await supabase.from('ingredients').select('*')
+      setAllIngredients(data)
+    } catch {}
+  }
+  getIngredients()
+  // }, [])
 
-  // const [order, setOrder] = useState<any>()
-  const [ingredients, setIngredients] = useState<Ingredient>({} as Ingredient)
-  const [selected, setSelected] = useState<any>(null)
-  const [selectedKeys, setSelectedKeys] = useState<any>(new Set(['']))
+  const [selectedTab, setSelectedTab] = useState<any>('grains')
+  const [selected, setSelected] = useState<any>()
+  const [ingredients, setIngredients] = useState<Ingredient[]>([])
+  const [allIngredients, setAllIngredients] = useState<Ingredient[]>([])
 
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const selectedValue = useMemo(
-    () => Array.from(selectedKeys).join(', ').replaceAll('_', ' '),
-    [selectedKeys]
-  )
-
-  const handleOpen = (item: any) => {
-    setSelectedKeys(new Set(['']))
-    setIngredients(item)
-    setSelected(null)
+  const handleOpen = (category: any) => {
+    const ingredientsData = allIngredients.filter((i: Ingredient) => i.type === category.key)
+    setIngredients(ingredientsData)
     onOpen()
   }
 
   return (
-    <Tabs aria-label="Options" className="w-full justify-center">
-      <Tab key="grains" title="Grains">
-        <div>
-          <h1>Select the main ingredient of your dish and decide what kind of dish you want</h1>
-        </div>
-        {/* <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {ingredients.map((item, index) => (
-            <CategoryCard category={item} key={index} handleOpen={handleOpen} />
-          ))}
-        </div> */}
-        {/* <AddFoodModal
-          isOpen={isOpen}
-          onClose={onClose}
-          ingredients={ingredients}
-          setSelected={setSelected}
-          selected={selected}
-        /> */}
-      </Tab>
-      <Tab key="proteins" title="Proteins">
-        <Card>
-          <CardBody>
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-            consequat.
-          </CardBody>
-        </Card>
-      </Tab>
-      <Tab key="vegetables" title="Vegetables">
-        <Card>
-          <CardBody>
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-            est laborum.
-          </CardBody>
-        </Card>
-      </Tab>
-      <Tab key="fruits" title="Fruits">
-        <Card>
-          <CardBody>
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-            est laborum.
-          </CardBody>
-        </Card>
-      </Tab>
+    <Tabs
+      aria-label="Options"
+      className="w-full justify-center"
+      selectedKey={selectedTab}
+      onSelectionChange={setSelectedTab}
+      items={tabs}
+    >
+      {(item: any) => (
+        <Tab key={item.key} title={item.title}>
+          <div>
+            <h1>{item.subtitle}</h1>
+          </div>
+          <CategoryCard currentTab={item} handleOpen={handleOpen} />
+          <AddFoodModal
+            isOpen={isOpen}
+            onClose={onClose}
+            ingredients={ingredients}
+            setSelected={setSelected}
+            selected={selected}
+          />
+        </Tab>
+      )}
     </Tabs>
   )
 }

@@ -3,66 +3,48 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export interface Database {
   public: {
     Tables: {
-      calories: {
+      ingredients: {
         Row: {
+          calories: number | null
+          carbohydrates: number | null
+          category: string | null
           created_at: string
+          description: string | null
+          fats: number | null
           id: number
           image: string | null
           name: string | null
+          prices: Json | null
+          proteins: number | null
+          type: string | null
         }
         Insert: {
+          calories?: number | null
+          carbohydrates?: number | null
+          category?: string | null
           created_at?: string
+          description?: string | null
+          fats?: number | null
           id?: number
           image?: string | null
           name?: string | null
+          prices?: Json | null
+          proteins?: number | null
+          type?: string | null
         }
         Update: {
+          calories?: number | null
+          carbohydrates?: number | null
+          category?: string | null
           created_at?: string
+          description?: string | null
+          fats?: number | null
           id?: number
           image?: string | null
           name?: string | null
-        }
-        Relationships: []
-      }
-      drinks: {
-        Row: {
-          created_at: string
-          id: number
-          image: string | null
-          name: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          image?: string | null
-          name?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          image?: string | null
-          name?: string | null
-        }
-        Relationships: []
-      }
-      fats: {
-        Row: {
-          created_at: string
-          id: number
-          image: string | null
-          name: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          image?: string | null
-          name?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          image?: string | null
-          name?: string | null
+          prices?: Json | null
+          proteins?: number | null
+          type?: string | null
         }
         Relationships: []
       }
@@ -73,6 +55,7 @@ export interface Database {
           description: string | null
           id: number
           image: string | null
+          ingredients_id: number | null
           instructions: string | null
           items: Json | null
           name: string | null
@@ -88,6 +71,7 @@ export interface Database {
           description?: string | null
           id?: number
           image?: string | null
+          ingredients_id?: number | null
           instructions?: string | null
           items?: Json | null
           name?: string | null
@@ -103,6 +87,7 @@ export interface Database {
           description?: string | null
           id?: number
           image?: string | null
+          ingredients_id?: number | null
           instructions?: string | null
           items?: Json | null
           name?: string | null
@@ -113,6 +98,12 @@ export interface Database {
           voucher?: Json | null
         }
         Relationships: [
+          {
+            foreignKeyName: 'orders_ingredients_id_fkey'
+            columns: ['ingredients_id']
+            referencedRelation: 'ingredients'
+            referencedColumns: ['id']
+          },
           {
             foreignKeyName: 'orders_recipe_id_fkey'
             columns: ['recipe_id']
@@ -132,7 +123,8 @@ export interface Database {
           avatar_url: string | null
           created_at: string
           full_name: string | null
-          id: string | null
+          id: number
+          order_id: number | null
           phone: number | null
           updated_at: string
           user_id: string | null
@@ -143,7 +135,8 @@ export interface Database {
           avatar_url?: string | null
           created_at?: string
           full_name?: string | null
-          id?: string | null
+          id?: number
+          order_id?: number | null
           phone?: number | null
           updated_at?: string
           user_id?: string | null
@@ -154,7 +147,8 @@ export interface Database {
           avatar_url?: string | null
           created_at?: string
           full_name?: string | null
-          id?: string | null
+          id?: number
+          order_id?: number | null
           phone?: number | null
           updated_at?: string
           user_id?: string | null
@@ -163,33 +157,18 @@ export interface Database {
         }
         Relationships: [
           {
+            foreignKeyName: 'profiles_order_id_fkey'
+            columns: ['order_id']
+            referencedRelation: 'orders'
+            referencedColumns: ['id']
+          },
+          {
             foreignKeyName: 'profiles_user_id_fkey'
             columns: ['user_id']
             referencedRelation: 'users'
             referencedColumns: ['id']
           },
         ]
-      }
-      proteins: {
-        Row: {
-          created_at: string
-          id: number
-          image: string | null
-          name: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          image?: string | null
-          name?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          image?: string | null
-          name?: string | null
-        }
-        Relationships: []
       }
       recipes: {
         Row: {
@@ -217,97 +196,6 @@ export interface Database {
           name?: string | null
         }
         Relationships: []
-      }
-      sauces: {
-        Row: {
-          created_at: string
-          id: number
-          image: string | null
-          name: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          image?: string | null
-          name?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          image?: string | null
-          name?: string | null
-        }
-        Relationships: []
-      }
-      styles: {
-        Row: {
-          calorie_id: number | null
-          description: string | null
-          drink_id: number | null
-          fat_id: number | null
-          id: number
-          image: string | null
-          name: string | null
-          prices: Json | null
-          protein_id: number | null
-          sauce_id: number | null
-        }
-        Insert: {
-          calorie_id?: number | null
-          description?: string | null
-          drink_id?: number | null
-          fat_id?: number | null
-          id?: number
-          image?: string | null
-          name?: string | null
-          prices?: Json | null
-          protein_id?: number | null
-          sauce_id?: number | null
-        }
-        Update: {
-          calorie_id?: number | null
-          description?: string | null
-          drink_id?: number | null
-          fat_id?: number | null
-          id?: number
-          image?: string | null
-          name?: string | null
-          prices?: Json | null
-          protein_id?: number | null
-          sauce_id?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'styles_calorie_id_fkey'
-            columns: ['calorie_id']
-            referencedRelation: 'calories'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'styles_drink_id_fkey'
-            columns: ['drink_id']
-            referencedRelation: 'drinks'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'styles_fat_id_fkey'
-            columns: ['fat_id']
-            referencedRelation: 'fats'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'styles_protein_id_fkey'
-            columns: ['protein_id']
-            referencedRelation: 'proteins'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'styles_sauce_id_fkey'
-            columns: ['sauce_id']
-            referencedRelation: 'sauces'
-            referencedColumns: ['id']
-          },
-        ]
       }
     }
     Views: {

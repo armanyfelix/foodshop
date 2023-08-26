@@ -1,13 +1,14 @@
 'use client'
 
+import { Database } from '@/types/database.types'
 import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useCallback, useEffect, useState } from 'react'
-import { Database } from '../../types/database.types'
 import Avatar from './Avatar'
 
 export default function AccountForm({ session }: { session: Session | null }) {
   const supabase = createClientComponentClient<Database>()
   const [loading, setLoading] = useState(true)
+  // const [id, setId] = useState<number | null>(null)
   const [fullname, setFullname] = useState<string | null>(null)
   const [username, setUsername] = useState<string | null>(null)
   const [website, setWebsite] = useState<string | null>(null)
@@ -29,6 +30,7 @@ export default function AccountForm({ session }: { session: Session | null }) {
       }
 
       if (data) {
+        // setId(data.id)
         setFullname(data.full_name)
         setUsername(data.username)
         setWebsite(data.website)
@@ -59,7 +61,7 @@ export default function AccountForm({ session }: { session: Session | null }) {
       setLoading(true)
 
       let { error } = await supabase.from('profiles').upsert({
-        id: user?.id as string,
+        // id: user?.id as string,
         full_name: fullname,
         username,
         website,
