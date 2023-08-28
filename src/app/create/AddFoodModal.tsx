@@ -1,3 +1,6 @@
+import { SelectorIcon } from '@/svg/SelectorIcon'
+import { Ingredient, Price } from '@/types/ingredient'
+import { formatMoney, unitAbrevation } from '@/utils/format'
 import {
   Button,
   Divider,
@@ -7,29 +10,11 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Select,
+  SelectItem,
 } from '@nextui-org/react'
+import { useState } from 'react'
 import FoodCard from './FoodCard'
-
-interface Ingredient {
-  name: string
-  description: string
-  image: string
-  calorie: number
-  protein: number
-  fat: number
-  type: string
-  category: string
-  prices: {
-    sizes: {
-      small: number | null
-      medium: number | null
-      large: number | null
-    }
-    liter: number | null
-    kilo: number | null
-    piece: number | null
-  }
-}
 
 interface Props {
   isOpen: boolean
@@ -37,9 +22,45 @@ interface Props {
   ingredients: Ingredient[]
   selected: Ingredient
   setSelected: (selected: Ingredient) => void
+  addIngredient: (dish: any) => void
+  dish: any
 }
 
-export default function AddFoodModal({ isOpen, onClose, ingredients, selected, setSelected }: Props) {
+export default function AddFoodModal({
+  isOpen,
+  onClose,
+  ingredients,
+  dish,
+  addIngredient,
+  selected,
+  setSelected,
+}: Props) {
+  const [price, setPrice] = useState<Price>(selected?.prices[0])
+  const [priceKey, setPriceKey] = useState<any>(new Set(['0']))
+  const [amount, setAmount] = useState<number>(0)
+
+  const onAdd = (currentAmount: number) => {
+    const dishIngredients = dish.ingredients
+    const index = dishIngredients.findIndex((i: any) => i.ingredient.id === selected.id)
+    console.log(index)
+    if (index !== -1) {
+      dishIngredients[index] = {
+        ingredient: selected,
+        price,
+        amount: currentAmount,
+        total_price: price.value * amount,
+      }
+    } else {
+      dishIngredients.push({
+        ingredient: selected,
+        price,
+        amount,
+        total_price: price.value * amount,
+      })
+    }
+    setAmount(currentAmount)
+    addIngredient(dishIngredients)
+  }
   return (
     <Modal
       size="full"
@@ -54,12 +75,10 @@ export default function AddFoodModal({ isOpen, onClose, ingredients, selected, s
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className={`mt-14 flex flex-col gap-1 bg-cover text-xl`}>
-              {/* {main?.name} */}
+            <ModalHeader className={`mt-12 flex flex-col gap-1 bg-cover text-xl`}>
               {selected && (
                 <Image
                   shadow="sm"
-                  // radius="lg"
                   width="100%"
                   alt={selected.name}
                   className="h-[240px] w-full object-cover"
@@ -68,96 +87,128 @@ export default function AddFoodModal({ isOpen, onClose, ingredients, selected, s
               )}
             </ModalHeader>
             <ModalBody>
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-                {!selected &&
-                  ingredients?.map((ingredient: Ingredient, index: any) => (
+              {!selected ? (
+                <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                  {ingredients?.map((ingredient: Ingredient, index: any) => (
                     <FoodCard
                       key={`${ingredient.name}_${index}`}
                       ingredient={ingredient}
-                      // categoryName={main.name}
                       setSelected={setSelected}
+                      setPrice={setPrice}
                     />
                   ))}
-              </div>
-              {/* <Dropdown
-                        showArrow
-                        classNames={{
-                          base: 'py-1 px-1 border border-default-200 bg-gradient-to-br from-white to-default-200 dark:from-default-50 dark:to-black',
-                          arrow: 'bg-default-200',
-                        }}
-                      >
-                        <DropdownTrigger>
-                          <Button variant="bordered">
-                            {!selectedValue
-                              ? `Select a type of ${calorie?.name?.toLowerCase()}`
-                              : selectedValue}
-                          </Button>
-                        </DropdownTrigger>
-                        <DropdownMenu
-                          variant="faded"
-                          selectionMode="single"
-                          selectedKeys={selectedKeys}
-                          onSelectionChange={setSelectedKeys}
-                          aria-label="Dropdown menu with description"
-                        >
-                          <DropdownSection title={calorie?.name}>
-                            {calorie?.types?.map((t: any) => (
-                              <DropdownItem
-                                key={t.name}
-                                onClick={() => setType(t)}
-                                description={t.description}
-                                // startContent={
-                                //   <CheckCircleIcon className={iconClasses} />
-                                // }
-                              >
-                                {t.name}
-                              </DropdownItem>
-                            ))}
-                          </DropdownSection>
-                        </DropdownMenu>
-                      </Dropdown> */}
-              {selected && (
-                <div className="p-2">
-                  <div className="">
-                    <h1 className="text-3xl font-bold ">{selected.name}</h1>
+                </div>
+              ) : (
+                <div>
+                  <div className="mb-5">
+                    <h1 className="mb-5 text-3xl font-bold">{selected.name}</h1>
                     <p>{selected.description}</p>
-                    {/* <h1 className="text-2xl">{type.price}</h1> */}
                   </div>
                   <Divider />
-                  {/* <h3 className="mt-4">Nutrition</h3> */}
-                  <div className="mt-4 flex h-full flex-col justify-center space-y-4">
-                    <p>
-                      <b>Calorie:</b> {selected.calorie}
-                    </p>
-                    <p>
+                  <div className="my-5 text-xl">
+                    <h2 className="mb-5 text-sm text-gray-400">Information</h2>
+                    {selected.prices.map((p, i) => (
+                      <div key={i} className="flex items-center justify-between">
+                        <span className="text-gray-400">
+                          Price
+                          {p.by === 'weight' && ' by Kg:'}
+                          {p.by === 'piece' && ' by Piece:'}
+                        </span>
+                        <span>
+                          {formatMoney(price?.value)}
+                          {p.by === 'weight' && '/kg'}
+                          {p.by === 'piece' && '/pc'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <Divider />
+                  <div className="my-5 flex flex-col justify-center space-y-4">
+                    <h2 className="text-sm text-gray-400">Nutrition Facts</h2>
+                    <span>
+                      <b>Calories:</b> {selected.calories}
+                    </span>
+                    <span>
                       <b>Protein:</b> {selected.protein}
-                    </p>
+                    </span>
                     <p>
                       <b>Fat:</b> {selected.fat}
                     </p>
-                  </div>
-                  <div className="mx-auto flex w-64 items-center justify-between rounded-full bg-zinc-600">
-                    <button className="h-14 w-14 rounded-full text-2xl ease-in hover:bg-zinc-700 active:scale-105 active:bg-zinc-800">
-                      -
-                    </button>
-                    <span>5</span>
-                    <button className="h-14 w-14 rounded-full text-2xl ease-in hover:bg-zinc-700 active:scale-105 active:bg-zinc-800">
-                      +
-                    </button>
                   </div>
                 </div>
               )}
             </ModalBody>
             <ModalFooter>
-              {selected && (
+              {amount > 0 && (
                 <>
-                  <Button color="danger" variant="light" onClick={onClose}>
-                    Cancel
-                  </Button>
-                  <Button color="primary" onPress={onClose}>
-                    Add
-                  </Button>
+                  <div className="mx-auto flex w-64 items-center justify-between rounded-2xl bg-zinc-600">
+                    <button
+                      onClick={() => {
+                        onAdd(price.by === 'weight' ? amount - 50 : amount - 1)
+                      }}
+                      className="h-12 w-12 rounded-2xl text-2xl ease-in hover:bg-zinc-700 active:scale-105 active:bg-zinc-800"
+                    >
+                      -
+                    </button>
+                    <span>{amount}</span>
+                    <button
+                      onClick={() => {
+                        onAdd(price.by === 'weight' ? amount + 50 : amount + 1)
+                      }}
+                      className="h-12 w-12 rounded-2xl text-2xl ease-in hover:bg-zinc-700 active:scale-105 active:bg-zinc-800"
+                    >
+                      +
+                    </button>
+                  </div>
+                  {selected.prices?.length > 1 ? (
+                    <Select
+                      placeholder="unit"
+                      size="sm"
+                      radius="lg"
+                      selectionMode="single"
+                      selectedKeys={priceKey}
+                      className="max-w-xs"
+                      classNames={{
+                        trigger: 'bg-transparent w-[66px]',
+                        popover: 'bg-transparent w-[110px]',
+                      }}
+                      onSelectionChange={(e: any) => {
+                        setPriceKey(e)
+                        const priceIterator = e.values()
+                        const priceIndex = Number(priceIterator.next().value)
+                        setPrice(selected.prices[priceIndex])
+                        onAdd(price.by === 'weight' ? amount + 50 : amount + 1)
+                      }}
+                      selectorIcon={<SelectorIcon />}
+                    >
+                      {selected.prices?.map((price, i) => (
+                        <SelectItem key={i} textValue={unitAbrevation(price.by)}>
+                          {price.by}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                  ) : (
+                    <div>{unitAbrevation(selected.prices[0].by)}</div>
+                  )}
                 </>
+              )}
+              {selected && amount <= 0 && (
+                <Button
+                  color="primary"
+                  size="lg"
+                  radius="lg"
+                  className="w-full"
+                  onPress={() => {
+                    onAdd(price.by === 'weight' ? amount + 50 : amount + 1)
+                  }}
+                >
+                  Add to dish
+                </Button>
+              )}
+              {selected && amount > 0 && (
+                <Button color="primary" size="lg" radius="lg" className="w-full" onPress={onClose}>
+                  Continue
+                </Button>
               )}
             </ModalFooter>
           </>

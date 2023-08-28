@@ -1,37 +1,24 @@
 'use client'
 
+import { Ingredient, Price } from '@/types/ingredient'
 import { Card, CardBody, CardFooter, Image } from '@nextui-org/react'
-
-interface Ingredient {
-  name: string
-  description: string
-  image: string
-  calorie: number
-  protein: number
-  fat: number
-  type: string
-  category: string
-  prices: {
-    sizes: {
-      small: number | null
-      medium: number | null
-      large: number | null
-    }
-    liter: number | null
-    kilo: number | null
-    piece: number | null
-  }
-}
 
 interface Props {
   ingredient: Ingredient
   setSelected: (selected: Ingredient) => void
+  setPrice: (price: Price) => void
 }
 
-export default function FoodCard({ ingredient, setSelected }: Props) {
-  console.log('🚀 ~ file: FoodCard.tsx:32 ~ FoodCard ~ ingredient:', ingredient)
+export default function FoodCard({ ingredient, setSelected, setPrice }: Props) {
   return (
-    <Card shadow="sm" isPressable onPress={() => setSelected(ingredient)}>
+    <Card
+      shadow="sm"
+      isPressable
+      onPress={() => {
+        setSelected(ingredient)
+        setPrice(ingredient.prices[0])
+      }}
+    >
       {/* <CardHeader>
         Make some tacos
       </CardHeader> */}

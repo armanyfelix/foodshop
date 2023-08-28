@@ -10,7 +10,7 @@ export default function CallToAction() {
       radius="lg"
       className=" bg-gradient-to-tr from-orange-700 to-amber-700 text-white shadow-lg"
     >
-      <Link href="/create">Start preparing your food</Link>
+      <Link href="/create">Create your dish</Link>
     </Button>
   )
 }

@@ -1,31 +1,27 @@
 'use client'
 
+import { Ingredient } from '@/types/ingredient'
 import { Tab, Tabs, useDisclosure } from '@nextui-org/react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { create } from 'zustand'
 import AddFoodModal from './AddFoodModal'
 import CategoryCard from './CategoryCard'
 
-interface Ingredient {
-  name: string
-  description: string
-  image: string
-  calorie: number
-  protein: number
-  fat: number
-  type: string
-  category: string
-  prices: {
-    sizes: {
-      small: number | null
-      medium: number | null
-      large: number | null
-    }
-    liter: number | null
-    kilo: number | null
-    piece: number | null
-  }
+type Store = {
+  dish: any[]
+  addIngredient: () => void
 }
+
+const useDishStore = create<any>((set: any) => ({
+  dish: {
+    ingredients: [],
+    price: null,
+    recipe: null,
+  },
+  addIngredient: (ingredients: any) =>
+    set((state: any) => ({ dish: { ...state.dish, ingredients: ingredients } })),
+}))
 
 export default function TabsC() {
   const tabs = [
@@ -45,16 +41,23 @@ export default function TabsC() {
       subtitle: '',
     },
   ]
-  // useEffect(() => {
-  async function getIngredients() {
-    try {
-      const supabase = createClientComponentClient()
-      const { data }: any = await supabase.from('ingredients').select('*')
-      setAllIngredients(data)
-    } catch {}
-  }
-  getIngredients()
-  // }, [])
+
+  const addIngredient = useDishStore((state: any) => state.addIngredient)
+  const dish = useDishStore((state: any) => state.dish)
+  console.log('🚀 ~ file: TabsC.tsx:43 ~ TabsC ~ dish:', dish)
+
+  useEffect(() => {
+    async function getIngredients() {
+      try {
+        const supabase = createClientComponentClient()
+        const { data }: any = await supabase.from('ingredients').select('*')
+        setAllIngredients(data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getIngredients()
+  }, [])
 
   const [selectedTab, setSelectedTab] = useState<any>('grains')
   const [selected, setSelected] = useState<any>()
@@ -70,28 +73,37 @@ export default function TabsC() {
   }
 
   return (
-    <Tabs
-      aria-label="Options"
-      className="w-full justify-center"
-      selectedKey={selectedTab}
-      onSelectionChange={setSelectedTab}
-      items={tabs}
-    >
-      {(item: any) => (
-        <Tab key={item.key} title={item.title}>
-          <div>
-            <h1>{item.subtitle}</h1>
-          </div>
-          <CategoryCard currentTab={item} handleOpen={handleOpen} />
-          <AddFoodModal
-            isOpen={isOpen}
-            onClose={onClose}
-            ingredients={ingredients}
-            setSelected={setSelected}
-            selected={selected}
-          />
-        </Tab>
-      )}
-    </Tabs>
+    <>
+      <Tabs
+        aria-label="Options"
+        className="w-full justify-center"
+        selectedKey={selectedTab}
+        onSelectionChange={setSelectedTab}
+        items={tabs}
+      >
+        {(item: any) => (
+          <Tab key={item.key} title={item.title}>
+            <div>
+              <h1>{dish.length}</h1>
+            </div>
+            <CategoryCard currentTab={item} handleOpen={handleOpen} />
+            <AddFoodModal
+              isOpen={isOpen}
+              onClose={onClose}
+              ingredients={ingredients}
+              setSelected={setSelected}
+              selected={selected}
+              addIngredient={addIngredient}
+              dish={dish}
+            />
+          </Tab>
+        )}
+      </Tabs>
+      {/* <div className="fixed bottom-5 right-1/2 translate-x-1/2 w-96">
+        <Button type="button" onClick={addIngredient} color="primary" radius="lg" size="lg" className="w-full">
+          Add to Dish
+        </Button>
+      </div> */}
+    </>
   )
 }

@@ -1,4 +1,5 @@
 import { Card, CardFooter, Image } from '@nextui-org/react'
+import { Fragment } from 'react'
 
 interface Props {
   currentTab: any
@@ -39,10 +40,10 @@ export default function CategoryCard({ currentTab, handleOpen }: Props) {
 
   return (
     <section className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
-      {categories.map((c) => (
-        <>
+      {categories.map((c, i) => (
+        <Fragment key={`${c.key}_${i}`}>
           {c.type === currentTab.key && (
-            <Card key={c.key} isFooterBlurred isPressable onPress={() => handleOpen(c)} className="h-[233px]">
+            <Card isFooterBlurred isPressable onPress={() => handleOpen(c)} className="h-[233px]">
               <Image
                 removeWrapper
                 alt="Relaxing app background"
@@ -57,7 +58,7 @@ export default function CategoryCard({ currentTab, handleOpen }: Props) {
               </CardFooter>
             </Card>
           )}
-        </>
+        </Fragment>
       ))}
     </section>
   )

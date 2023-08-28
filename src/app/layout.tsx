@@ -1,10 +1,9 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
-import Header from './layout/Header'
-// import { redirect } from 'next/navigation'
 import { ReactNode } from 'react'
 import './globals.css'
+import Header from './layout/Header'
 import { Providers } from './providers'
 
 export const dynamic = 'force-dynamic'

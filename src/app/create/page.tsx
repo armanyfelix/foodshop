@@ -21,7 +21,7 @@ import TabsC from './TabsC'
 //       kilo: number | null
 //       piece: number | null
 //     }
-//   }[]
+//   }[]string
 // }
 
 export default async function Create() {

@@ -10,12 +10,12 @@ export interface Database {
           category: string | null
           created_at: string
           description: string | null
-          fats: number | null
+          fat: number | null
           id: number
           image: string | null
           name: string | null
           prices: Json | null
-          proteins: number | null
+          protein: number | null
           type: string | null
         }
         Insert: {
@@ -24,12 +24,12 @@ export interface Database {
           category?: string | null
           created_at?: string
           description?: string | null
-          fats?: number | null
+          fat?: number | null
           id?: number
           image?: string | null
           name?: string | null
           prices?: Json | null
-          proteins?: number | null
+          protein?: number | null
           type?: string | null
         }
         Update: {
@@ -38,12 +38,12 @@ export interface Database {
           category?: string | null
           created_at?: string
           description?: string | null
-          fats?: number | null
+          fat?: number | null
           id?: number
           image?: string | null
           name?: string | null
           prices?: Json | null
-          proteins?: number | null
+          protein?: number | null
           type?: string | null
         }
         Relationships: []
