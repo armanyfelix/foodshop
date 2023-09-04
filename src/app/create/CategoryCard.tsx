@@ -39,7 +39,7 @@ export default function CategoryCard({ currentTab, handleOpen }: Props) {
   ]
 
   return (
-    <section className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
+    <section className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-4">
       {categories.map((c, i) => (
         <Fragment key={`${c.key}_${i}`}>
           {c.type === currentTab.key && (

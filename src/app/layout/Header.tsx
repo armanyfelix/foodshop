@@ -12,12 +12,8 @@ import {
   NavbarMenuToggle,
 } from '@nextui-org/react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-// import { useTheme } from 'next-themes'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-// import logoDark from '../../../public/logo_dark.png'
-// import { lorelei } from '@dicebear/collection'
-// import { createAvatar } from '@dicebear/core'
 
 import type { Database } from '@/types/database.types'
 

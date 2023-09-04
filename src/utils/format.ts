@@ -15,3 +15,7 @@ export function formatMoney(number: number) {
   integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
   return '$' + integer + '.' + decimal
 }
+
+export function isEmpty(obj: any) {
+  return Object.keys(obj).length === 0
+}

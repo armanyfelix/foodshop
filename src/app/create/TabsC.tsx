@@ -1,26 +1,35 @@
 'use client'
 
 import { Ingredient } from '@/types/ingredient'
-import { Tab, Tabs, useDisclosure } from '@nextui-org/react'
+import { Button, Tab, Tabs, useDisclosure } from '@nextui-org/react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { create } from 'zustand'
 import AddFoodModal from './AddFoodModal'
 import CategoryCard from './CategoryCard'
 
-type Store = {
-  dish: any[]
-  addIngredient: () => void
+interface Tabs {
+  key: string
+  title: string
+  subtitle: string
 }
 
-const useDishStore = create<any>((set: any) => ({
+type Store = {
+  dish: {
+    ingredients: Ingredient[]
+    price: number | null
+    recipe: any | null
+  }
+  addIngredient: (ingredients: Ingredient[]) => void
+}
+
+const useDishStore = create<Store>((set) => ({
   dish: {
     ingredients: [],
     price: null,
     recipe: null,
   },
-  addIngredient: (ingredients: any) =>
-    set((state: any) => ({ dish: { ...state.dish, ingredients: ingredients } })),
+  addIngredient: (ingredients) => set((state) => ({ dish: { ...state.dish, ingredients: ingredients } })),
 }))
 
 export default function TabsC() {
@@ -41,10 +50,18 @@ export default function TabsC() {
       subtitle: '',
     },
   ]
+  const [selectedTab, setSelectedTab] = useState<any>('grains')
+  const [ingredient, setIngredient] = useState<Ingredient | null>(null)
+  const [ingredients, setIngredients] = useState<Ingredient[]>([])
+  const [allIngredients, setAllIngredients] = useState<Ingredient[]>([])
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { dish, addIngredient } = useDishStore()
 
-  const addIngredient = useDishStore((state: any) => state.addIngredient)
-  const dish = useDishStore((state: any) => state.dish)
-  console.log('🚀 ~ file: TabsC.tsx:43 ~ TabsC ~ dish:', dish)
+  const handleOpen = (category: any) => {
+    const ingredientsData = allIngredients.filter((i: Ingredient) => i.type === category.key)
+    setIngredients(ingredientsData)
+    onOpen()
+  }
 
   useEffect(() => {
     async function getIngredients() {
@@ -59,19 +76,6 @@ export default function TabsC() {
     getIngredients()
   }, [])
 
-  const [selectedTab, setSelectedTab] = useState<any>('grains')
-  const [selected, setSelected] = useState<any>()
-  const [ingredients, setIngredients] = useState<Ingredient[]>([])
-  const [allIngredients, setAllIngredients] = useState<Ingredient[]>([])
-
-  const { isOpen, onOpen, onClose } = useDisclosure()
-
-  const handleOpen = (category: any) => {
-    const ingredientsData = allIngredients.filter((i: Ingredient) => i.type === category.key)
-    setIngredients(ingredientsData)
-    onOpen()
-  }
-
   return (
     <>
       <Tabs
@@ -79,31 +83,33 @@ export default function TabsC() {
         className="w-full justify-center"
         selectedKey={selectedTab}
         onSelectionChange={setSelectedTab}
+        variant="bordered"
         items={tabs}
       >
-        {(item: any) => (
+        {(item: Tabs) => (
           <Tab key={item.key} title={item.title}>
-            <div>
-              <h1>{dish.length}</h1>
-            </div>
             <CategoryCard currentTab={item} handleOpen={handleOpen} />
-            <AddFoodModal
-              isOpen={isOpen}
-              onClose={onClose}
-              ingredients={ingredients}
-              setSelected={setSelected}
-              selected={selected}
-              addIngredient={addIngredient}
-              dish={dish}
-            />
+            <Suspense>
+              <AddFoodModal
+                isOpen={isOpen}
+                onClose={onClose}
+                ingredients={ingredients}
+                setIngredient={setIngredient}
+                ingredient={ingredient}
+                addIngredient={addIngredient}
+                dish={dish}
+              />
+            </Suspense>
           </Tab>
         )}
       </Tabs>
-      {/* <div className="fixed bottom-5 right-1/2 translate-x-1/2 w-96">
-        <Button type="button" onClick={addIngredient} color="primary" radius="lg" size="lg" className="w-full">
-          Add to Dish
-        </Button>
-      </div> */}
+      {dish && dish.ingredients.length > 0 && (
+        <div className="fixed bottom-5 right-1/2 z-50 w-96 translate-x-1/2">
+          <Button type="button" color="primary" radius="lg" size="lg" className="w-full">
+            See Dish ({dish.ingredients.length})
+          </Button>
+        </div>
+      )}
     </>
   )
 }

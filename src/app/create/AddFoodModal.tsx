@@ -1,10 +1,10 @@
-import { SelectorIcon } from '@/svg/SelectorIcon'
+import ChevronLeftIcon from '@/svg/ChevronLeftIcon'
+import SelectorIcon from '@/svg/SelectorIcon'
 import { Ingredient, Price } from '@/types/ingredient'
 import { formatMoney, unitAbrevation } from '@/utils/format'
 import {
   Button,
   Divider,
-  Image,
   Modal,
   ModalBody,
   ModalContent,
@@ -12,6 +12,7 @@ import {
   ModalHeader,
   Select,
   SelectItem,
+  Textarea,
 } from '@nextui-org/react'
 import { useState } from 'react'
 import FoodCard from './FoodCard'
@@ -20,8 +21,8 @@ interface Props {
   isOpen: boolean
   onClose: () => void
   ingredients: Ingredient[]
-  selected: Ingredient
-  setSelected: (selected: Ingredient) => void
+  ingredient: Ingredient | null
+  setIngredient: (ingredient: Ingredient | null) => void
   addIngredient: (dish: any) => void
   dish: any
 }
@@ -32,33 +33,32 @@ export default function AddFoodModal({
   ingredients,
   dish,
   addIngredient,
-  selected,
-  setSelected,
+  ingredient,
+  setIngredient,
 }: Props) {
-  const [price, setPrice] = useState<Price>(selected?.prices[0])
+  const [price, setPrice] = useState<Price | null>(null)
   const [priceKey, setPriceKey] = useState<any>(new Set(['0']))
-  const [amount, setAmount] = useState<number>(0)
+  const [amount, setAmount] = useState<number>(1)
 
   const onAdd = (currentAmount: number) => {
+    setAmount(currentAmount)
     const dishIngredients = dish.ingredients
-    const index = dishIngredients.findIndex((i: any) => i.ingredient.id === selected.id)
-    console.log(index)
+    const index = dishIngredients.findIndex((i: any) => i.ingredient?.id === ingredient?.id)
     if (index !== -1) {
       dishIngredients[index] = {
-        ingredient: selected,
+        ingredient,
         price,
         amount: currentAmount,
-        total_price: price.value * amount,
+        total_price: price?.value || 0 * currentAmount,
       }
     } else {
       dishIngredients.push({
-        ingredient: selected,
+        ingredient,
         price,
         amount,
-        total_price: price.value * amount,
+        total_price: price?.value || 0 * currentAmount,
       })
     }
-    setAmount(currentAmount)
     addIngredient(dishIngredients)
   }
   return (
@@ -66,101 +66,152 @@ export default function AddFoodModal({
       size="full"
       isOpen={isOpen}
       scrollBehavior="inside"
-      onClose={onClose}
+      onClose={() => {
+        onClose()
+        setIngredient(null)
+        setPrice(null)
+      }}
       classNames={{
-        closeButton: 'bg-white text-black m-3',
-        base: 'bg-black max-h-full',
+        closeButton: 'bg-default/40 text-white mt-3 mr-4 shadow',
+        base: 'bg-black max-h-full min-h-full',
       }}
     >
       <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className={`mt-12 flex flex-col gap-1 bg-cover text-xl`}>
-              {selected && (
-                <Image
-                  shadow="sm"
-                  width="100%"
-                  alt={selected.name}
-                  className="h-[240px] w-full object-cover"
-                  src={`/images/${selected.category}s/${selected.type}s/${selected.image}`}
-                />
-              )}
+        <>
+          {ingredient && (
+            <ModalHeader
+              className="h-[240px] bg-cover bg-center"
+              style={{
+                backgroundImage: `url(/images/${ingredient.category}s/${ingredient.type}s/${ingredient.image})`,
+              }}
+            >
+              <Button
+                variant="flat"
+                className="w-fit font-bold hover:bg-neutral-800"
+                size="sm"
+                radius="lg"
+                startContent={<ChevronLeftIcon />}
+                onPress={() => {
+                  setIngredient(null)
+                  setPrice(null)
+                }}
+              >
+                {ingredient?.type?.toUpperCase()}S
+              </Button>
             </ModalHeader>
-            <ModalBody>
-              {!selected ? (
-                <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-                  {ingredients?.map((ingredient: Ingredient, index: any) => (
-                    <FoodCard
-                      key={`${ingredient.name}_${index}`}
-                      ingredient={ingredient}
-                      setSelected={setSelected}
-                      setPrice={setPrice}
-                    />
+          )}
+          <ModalBody>
+            {ingredient ? (
+              <>
+                <div className="my-2">
+                  <h1 className="mb-3 text-3xl font-bold">{ingredient.name}</h1>
+                  <p>{ingredient.description}</p>
+                </div>
+                <Divider />
+                <div className="my-2">
+                  <h2 className="mb-3 text-gray-200">Prices</h2>
+                  {ingredient.prices?.map((p, i) => (
+                    <div key={i} className="flex items-center justify-between font-bold">
+                      <span>
+                        {p.by === 'weight' && ' by Weight:'}
+                        {p.by === 'piece' && ' by Piece:'}
+                      </span>
+                      <span>
+                        {formatMoney(price?.value || 0)}
+                        {p.by === 'weight' && '/kg'}
+                        {p.by === 'piece' && '/pc'}
+                      </span>
+                    </div>
                   ))}
                 </div>
-              ) : (
-                <div>
-                  <div className="mb-5">
-                    <h1 className="mb-5 text-3xl font-bold">{selected.name}</h1>
-                    <p>{selected.description}</p>
-                  </div>
-                  <Divider />
-                  <div className="my-5 text-xl">
-                    <h2 className="mb-5 text-sm text-gray-400">Information</h2>
-                    {selected.prices.map((p, i) => (
-                      <div key={i} className="flex items-center justify-between">
-                        <span className="text-gray-400">
-                          Price
-                          {p.by === 'weight' && ' by Kg:'}
-                          {p.by === 'piece' && ' by Piece:'}
-                        </span>
-                        <span>
-                          {formatMoney(price?.value)}
-                          {p.by === 'weight' && '/kg'}
-                          {p.by === 'piece' && '/pc'}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  <Divider />
-                  <div className="my-5 flex flex-col justify-center space-y-4">
-                    <h2 className="text-sm text-gray-400">Nutrition Facts</h2>
-                    <span>
-                      <b>Calories:</b> {selected.calories}
-                    </span>
-                    <span>
-                      <b>Protein:</b> {selected.protein}
-                    </span>
-                    <p>
-                      <b>Fat:</b> {selected.fat}
-                    </p>
-                  </div>
+                <Divider />
+                <div className="my-2 flex flex-col justify-center space-y-4">
+                  <h2 className="text-gray-200">Nutrition Facts</h2>
+                  <span>
+                    <b>Calories:</b> {ingredient.calories}
+                  </span>
+                  <span>
+                    <b>Protein:</b> {ingredient.protein}
+                  </span>
+                  <span>
+                    <b>Fat:</b> {ingredient.fat}
+                  </span>
                 </div>
-              )}
-            </ModalBody>
-            <ModalFooter>
-              {amount > 0 && (
-                <>
-                  <div className="mx-auto flex w-64 items-center justify-between rounded-2xl bg-zinc-600">
-                    <button
-                      onClick={() => {
-                        onAdd(price.by === 'weight' ? amount - 50 : amount - 1)
-                      }}
-                      className="h-12 w-12 rounded-2xl text-2xl ease-in hover:bg-zinc-700 active:scale-105 active:bg-zinc-800"
+                <Divider />
+                <div className="my-2 flex flex-col justify-center space-y-4">
+                  <Textarea
+                    label="Instructions"
+                    labelPlacement="outside"
+                    placeholder="Specify how you want your food to be cooked or served"
+                    minRows={6}
+                  />
+                </div>
+              </>
+            ) : (
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                {ingredients?.map((ingredient: Ingredient, index: number) => (
+                  <FoodCard
+                    key={`${ingredient.name}_${index}`}
+                    ingredient={ingredient}
+                    setIngredient={setIngredient}
+                    setPrice={setPrice}
+                  />
+                ))}
+              </div>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            {amount > 0 && (
+              <div className="flex items-center justify-between">
+                <div className="mx-auto flex rounded-2xl bg-zinc-600">
+                  <Button
+                    isDisabled={
+                      (price?.by === 'weight' && amount === 50) || (price?.by === 'piece' && amount === 1)
+                    }
+                    size="sm"
+                    variant="flat"
+                    isIconOnly
+                    onClick={() => {
+                      onAdd(price?.by === 'weight' ? amount - 50 : amount - 1)
+                    }}
+                    className="h-12 w-12 rounded-2xl text-center ease-in hover:bg-zinc-700 active:scale-105 active:bg-zinc-800"
+                  >
+                    <svg
+                      width="25"
+                      height="41"
+                      className="inline"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      -
-                    </button>
-                    <span>{amount}</span>
-                    <button
-                      onClick={() => {
-                        onAdd(price.by === 'weight' ? amount + 50 : amount + 1)
-                      }}
-                      className="h-12 w-12 rounded-2xl text-2xl ease-in hover:bg-zinc-700 active:scale-105 active:bg-zinc-800"
+                      <path fill="#ffffff" d="M5 11a1 1 0 1 1 0-2h10a1 1 0 1 1 0 2H5Z" />
+                    </svg>
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="flat"
+                    isIconOnly
+                    onClick={() => {
+                      onAdd(price?.by === 'weight' ? amount + 50 : amount + 1)
+                    }}
+                    className="h-12 w-12 rounded-2xl text-2xl ease-in hover:bg-zinc-700 active:scale-105 active:bg-zinc-800"
+                  >
+                    <svg
+                      width="25"
+                      height="41"
+                      className="inline"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      +
-                    </button>
-                  </div>
-                  {selected.prices?.length > 1 ? (
+                      <g fill="#ffffff">
+                        <path d="M5 11a1 1 0 1 1 0-2h10a1 1 0 1 1 0 2H5Z" />
+                        <path d="M9 5a1 1 0 0 1 2 0v10a1 1 0 1 1-2 0V5Z" />
+                      </g>
+                    </svg>
+                  </Button>
+                </div>
+                {ingredient && ingredient.prices?.length > 1 ? (
+                  <>
+                    <span className="ml-5">{amount}</span>
                     <Select
                       placeholder="unit"
                       size="sm"
@@ -170,49 +221,49 @@ export default function AddFoodModal({
                       className="max-w-xs"
                       classNames={{
                         trigger: 'bg-transparent w-[66px]',
-                        popover: 'bg-transparent w-[110px]',
+                        popover: 'w-[110px]',
                       }}
+                      aria-labelledby="Format"
                       onSelectionChange={(e: any) => {
                         setPriceKey(e)
                         const priceIterator = e.values()
                         const priceIndex = Number(priceIterator.next().value)
-                        setPrice(selected.prices[priceIndex])
-                        onAdd(price.by === 'weight' ? amount + 50 : amount + 1)
+                        setPrice(ingredient?.prices[priceIndex])
+                        onAdd(ingredient?.prices[priceIndex]?.by === 'weight' ? 50 : 1)
                       }}
                       selectorIcon={<SelectorIcon />}
                     >
-                      {selected.prices?.map((price, i) => (
-                        <SelectItem key={i} textValue={unitAbrevation(price.by)}>
-                          {price.by}
+                      {ingredient.prices?.map((p, i) => (
+                        <SelectItem key={i} textValue={unitAbrevation(p.by)}>
+                          {p.by}
                         </SelectItem>
                       ))}
                     </Select>
-                  ) : (
-                    <div>{unitAbrevation(selected.prices[0].by)}</div>
-                  )}
-                </>
-              )}
-              {selected && amount <= 0 && (
-                <Button
-                  color="primary"
-                  size="lg"
-                  radius="lg"
-                  className="w-full"
-                  onPress={() => {
-                    onAdd(price.by === 'weight' ? amount + 50 : amount + 1)
-                  }}
-                >
-                  Add to dish
-                </Button>
-              )}
-              {selected && amount > 0 && (
-                <Button color="primary" size="lg" radius="lg" className="w-full" onPress={onClose}>
-                  Continue
-                </Button>
-              )}
-            </ModalFooter>
-          </>
-        )}
+                  </>
+                ) : (
+                  ingredient && (
+                    <div className="flex w-[66px] items-center justify-center">
+                      {amount}
+                      {unitAbrevation(ingredient.prices[0]?.by)}
+                    </div>
+                  )
+                )}
+              </div>
+            )}
+            {ingredient && (
+              <Button
+                color="primary"
+                variant="shadow"
+                size="lg"
+                radius="lg"
+                className="w-full"
+                onPress={() => onAdd(price?.by === 'weight' ? 50 : 1)}
+              >
+                Add to dish
+              </Button>
+            )}
+          </ModalFooter>
+        </>
       </ModalContent>
     </Modal>
   )

@@ -1,5 +1,5 @@
-import { LockIcon } from '@/svg/LockIcon'
-import { MailIcon } from '@/svg/MainIcon'
+import LockIcon from '@/svg/LockIcon'
+import MailIcon from '@/svg/MainIcon'
 import { Button, Input, Link } from '@nextui-org/react'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'

@@ -5,23 +5,20 @@ import { Card, CardBody, CardFooter, Image } from '@nextui-org/react'
 
 interface Props {
   ingredient: Ingredient
-  setSelected: (selected: Ingredient) => void
+  setIngredient: (ingredient: Ingredient) => void
   setPrice: (price: Price) => void
 }
 
-export default function FoodCard({ ingredient, setSelected, setPrice }: Props) {
+export default function FoodCard({ ingredient, setIngredient, setPrice }: Props) {
   return (
     <Card
       shadow="sm"
       isPressable
       onPress={() => {
-        setSelected(ingredient)
+        setIngredient(ingredient)
         setPrice(ingredient.prices[0])
       }}
     >
-      {/* <CardHeader>
-        Make some tacos
-      </CardHeader> */}
       <CardBody className="overflow-visible p-0">
         <Image
           shadow="sm"
@@ -34,7 +31,6 @@ export default function FoodCard({ ingredient, setSelected, setPrice }: Props) {
       </CardBody>
       <CardFooter className="justify-between text-small">
         <b>{ingredient.name}</b>
-        {/* <p className="text-default-500"></p> */}
       </CardFooter>
     </Card>
   )
