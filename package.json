@@ -15,7 +15,7 @@
     "prepare": "husky install",
     "cypress": "cypress open",
     "test": "jest --watch",
-    "database-types": "npx supabase gen types typescript --project-id \"uuypcueeqdetjykvktxi\" > ./src/types/database.types.ts"
+    "gen:types": "npx supabase gen types typescript --project-id \"uuypcueeqdetjykvktxi\" > ./src/types/database.types.ts"
   },
   "dependencies": {
     "@dicebear/collection": "^6.0.4",

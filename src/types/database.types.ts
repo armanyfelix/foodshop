@@ -11,12 +11,12 @@ export interface Database {
           created_at: string
           description: string | null
           fat: number | null
+          group: string | null
           id: number
           image: string | null
           name: string | null
           prices: Json | null
           protein: number | null
-          type: string | null
         }
         Insert: {
           calories?: number | null
@@ -25,12 +25,12 @@ export interface Database {
           created_at?: string
           description?: string | null
           fat?: number | null
+          group?: string | null
           id?: number
           image?: string | null
           name?: string | null
           prices?: Json | null
           protein?: number | null
-          type?: string | null
         }
         Update: {
           calories?: number | null
@@ -39,12 +39,12 @@ export interface Database {
           created_at?: string
           description?: string | null
           fat?: number | null
+          group?: string | null
           id?: number
           image?: string | null
           name?: string | null
           prices?: Json | null
           protein?: number | null
-          type?: string | null
         }
         Relationships: []
       }

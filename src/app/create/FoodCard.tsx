@@ -26,7 +26,7 @@ export default function FoodCard({ ingredient, setIngredient, setPrice }: Props)
           width="100%"
           alt={ingredient.name}
           className="h-[140px] w-full object-cover"
-          src={`/images/${ingredient.category}s/${ingredient.type}s/${ingredient.image}`}
+          src={`/images/${ingredient.group}s/${ingredient.category}s/${ingredient.image}`}
         />
       </CardBody>
       <CardFooter className="justify-between text-small">

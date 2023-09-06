@@ -1,3 +1,8 @@
+export interface Price {
+  by: string
+  amount: number
+}
+
 export interface Ingredient {
   id: number
   name: string
@@ -6,16 +11,13 @@ export interface Ingredient {
   calories: number
   protein: number
   fat: number
-  type: string
+  group: string
   category: string
-  prices: {
-    by: string
-    value: number
-  }[]
+  prices: Price[]
 }
 
-export interface Price {
-  by: string
-  value: number
+export interface Dish {
+  ingredients: Ingredient[]
+  recipe: any
+  amount: number | null
 }
-;[]

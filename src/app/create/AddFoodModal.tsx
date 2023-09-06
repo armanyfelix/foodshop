@@ -3,6 +3,8 @@ import SelectorIcon from '@/svg/SelectorIcon'
 import { Ingredient, Price } from '@/types/ingredient'
 import { formatMoney, unitAbrevation } from '@/utils/format'
 import {
+  Accordion,
+  AccordionItem,
   Button,
   Divider,
   Image,
@@ -15,7 +17,7 @@ import {
   SelectItem,
   Textarea,
 } from '@nextui-org/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import FoodCard from './FoodCard'
 
 interface Props {
@@ -32,49 +34,53 @@ export default function AddFoodModal({
   isOpen,
   onClose,
   ingredients,
-  dish,
   addIngredient,
   ingredient,
   setIngredient,
+  dish,
 }: Props) {
   const [price, setPrice] = useState<Price | null>(null)
   const [priceKey, setPriceKey] = useState<any>(new Set(['0']))
-  const [amount, setAmount] = useState<number>(1)
+  const [instructions, setInstructions] = useState<string>('')
+  const [quantity, setQuantity] = useState<number>(0)
+  const [order, setOrder] = useState<any>(null)
 
-  const onAdd = (currentAmount: number) => {
-    setAmount(currentAmount)
-    const dishIngredients = dish.ingredients
-    const index = dishIngredients.findIndex((i: any) => i.ingredient?.id === ingredient?.id)
-    if (index !== -1) {
-      dishIngredients[index] = {
-        ingredient,
-        price,
-        amount: currentAmount,
-        total_price: price?.value || 0 * currentAmount,
-      }
-    } else {
-      dishIngredients.push({
-        ingredient,
-        price,
-        amount,
-        total_price: price?.value || 0 * currentAmount,
-      })
+  const onAdd = (newQuantity: number) => {
+    setQuantity(newQuantity)
+    let amount = 0
+    if (price) {
+      amount = price.by === 'weight' ? (price.amount / 1000) * newQuantity : price.amount * newQuantity
     }
-    addIngredient(dishIngredients)
+    setOrder({
+      ingredient,
+      price,
+      quantity: newQuantity,
+      amount,
+    })
   }
+
+  useEffect(() => {
+    if (price) {
+      onAdd(price.by === 'weight' ? 50 : 1)
+    }
+  }, [price])
   return (
     <Modal
       isOpen={isOpen}
+      size="xl"
+      backdrop="blur"
       scrollBehavior="inside"
+      placement="center"
       onClose={() => {
         onClose()
         setIngredient(null)
         setPrice(null)
+        setPriceKey(new Set(['0']))
       }}
       classNames={{
         closeButton: 'bg-default/90 text-white z-20 mt-3 mr-4 shadow',
-        base: 'max-h-full min-h-full',
-        body: 'p-0',
+        base: 'max-h-full h-full md:h-5/6 md:max-h-none',
+        body: 'p-0 rounded-t-xl -mb-16 -translate-y-16',
         header: 'bg-transparent z-10',
       }}
     >
@@ -91,21 +97,22 @@ export default function AddFoodModal({
                 onPress={() => {
                   setIngredient(null)
                   setPrice(null)
+                  setPriceKey(new Set(['0']))
                 }}
               >
-                {ingredient?.type?.toUpperCase()}S
+                {ingredient?.category?.toUpperCase()}S
               </Button>
             )}
           </ModalHeader>
-          <ModalBody className="-translate-y-16">
+          <ModalBody>
             {ingredient ? (
-              <>
+              <div>
                 <Image
-                  radius="none"
+                  // radius="none"
                   width="100%"
                   className="h-[200px] w-full object-cover"
                   removeWrapper
-                  src={`/images/${ingredient.category}s/${ingredient.type}s/${ingredient.image}`}
+                  src={`/images/${ingredient.group}s/${ingredient.category}s/${ingredient.image}`}
                 />
                 <div className="px-5">
                   <div className="mb-5">
@@ -114,57 +121,64 @@ export default function AddFoodModal({
                   </div>
                   <Divider />
                   <div className="my-4">
-                    <h2 className="mb-3 text-gray-200">Prices</h2>
+                    <h3 className="mb-3 text-sm font-bold text-gray-200">Prices</h3>
                     {ingredient.prices?.map((p, i) => (
-                      <div key={i} className="flex items-center justify-between font-bold">
-                        <span>
+                      <ul key={i} className="flex items-center justify-between">
+                        <li>
                           {p.by === 'weight' && ' by Weight:'}
                           {p.by === 'piece' && ' by Piece:'}
-                        </span>
-                        <span>
-                          {formatMoney(price?.value || 0)}
+                        </li>
+                        <li>
+                          {formatMoney(price?.amount || 0)}
                           {p.by === 'weight' && '/kg'}
                           {p.by === 'piece' && '/pc'}
-                        </span>
-                      </div>
+                        </li>
+                      </ul>
                     ))}
                   </div>
-                  <Divider />
-                  <div className="my-4 flex flex-col justify-center space-y-4">
-                    <h2 className="text-gray-200">Nutrition Facts</h2>
-                    <span>
-                      <b>Calories:</b> {ingredient.calories}
-                    </span>
-                    <span>
-                      <b>Protein:</b> {ingredient.protein}
-                    </span>
-                    <span>
-                      <b>Fat:</b> {ingredient.fat}
-                    </span>
-                  </div>
-                  <Divider />
+                  {/* <Divider /> */}
+                  <Accordion variant="shadow">
+                    <AccordionItem key="1" aria-label="Nutrition Facts" title="Nutrition Facts">
+                      <ul className="my-4 flex flex-col justify-center space-y-4">
+                        <li>
+                          <b>Calories:</b> {ingredient.calories}
+                        </li>
+                        <li>
+                          <b>Protein:</b> {ingredient.protein}
+                        </li>
+                        <li>
+                          <b>Fat:</b> {ingredient.fat}
+                        </li>
+                      </ul>
+                    </AccordionItem>
+                  </Accordion>
+                  {/* <Divider /> */}
                   <div className="my-4 flex flex-col justify-center space-y-4">
                     <Textarea
                       label="Instructions"
+                      classNames={{
+                        label: 'font-bold',
+                        input: 'w-full',
+                      }}
                       labelPlacement="outside"
+                      value={instructions}
+                      onValueChange={setInstructions}
                       placeholder="Specify how you want your food to be cooked or served"
-                      minRows={14}
+                      minRows={3}
                     />
                   </div>
-                  {amount > 0 && (
+                  {quantity > 0 && (
                     <div className="flex items-center justify-between">
                       <div className="mx-auto flex rounded-2xl bg-zinc-600">
                         <Button
                           isDisabled={
-                            (price?.by === 'weight' && amount === 50) ||
-                            (price?.by === 'piece' && amount === 1)
+                            (price?.by === 'weight' && quantity === 50) ||
+                            (price?.by === 'piece' && quantity === 1)
                           }
                           size="sm"
                           variant="flat"
                           isIconOnly
-                          onClick={() => {
-                            onAdd(price?.by === 'weight' ? amount - 50 : amount - 1)
-                          }}
+                          onClick={() => onAdd(price?.by === 'weight' ? quantity - 50 : quantity - 1)}
                           className="h-12 w-12 rounded-2xl text-center ease-in hover:bg-zinc-700 active:scale-105 active:bg-zinc-800"
                         >
                           <svg
@@ -178,8 +192,8 @@ export default function AddFoodModal({
                           </svg>
                         </Button>
                         {ingredient && ingredient.prices?.length > 1 ? (
-                          <div className="flex">
-                            <span className="ml-5">{amount}</span>
+                          <div className="flex items-center">
+                            <span className="ml-5">{quantity}</span>
                             <Select
                               placeholder="unit"
                               size="sm"
@@ -211,7 +225,7 @@ export default function AddFoodModal({
                         ) : (
                           ingredient && (
                             <div className="flex w-[66px] items-center justify-center">
-                              {amount}
+                              {quantity}
                               {unitAbrevation(ingredient.prices[0]?.by)}
                             </div>
                           )
@@ -220,9 +234,7 @@ export default function AddFoodModal({
                           size="sm"
                           variant="flat"
                           isIconOnly
-                          onClick={() => {
-                            onAdd(price?.by === 'weight' ? amount + 50 : amount + 1)
-                          }}
+                          onClick={() => onAdd(price?.by === 'weight' ? quantity + 50 : quantity + 1)}
                           className="h-12 w-12 rounded-2xl text-2xl ease-in hover:bg-zinc-700 active:scale-105 active:bg-zinc-800"
                         >
                           <svg
@@ -242,9 +254,9 @@ export default function AddFoodModal({
                     </div>
                   )}
                 </div>
-              </>
+              </div>
             ) : (
-              <div className="mt-5 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+              <div className="mt-24 grid grid-cols-2 gap-4 px-4 md:grid-cols-3 lg:grid-cols-4">
                 {ingredients?.map((ingredient: Ingredient, index: number) => (
                   <FoodCard
                     key={`${ingredient.name}_${index}`}
@@ -264,9 +276,24 @@ export default function AddFoodModal({
                 size="lg"
                 radius="lg"
                 className="w-full"
-                onPress={() => onAdd(price?.by === 'weight' ? 50 : 1)}
+                onPress={() => {
+                  const ingredientsArray = dish.ingredients
+                  const newIngredientsArray = ingredientsArray.push({
+                    ...order,
+                    instructions,
+                  })
+                  console.log('🚀 ~ file: AddFoodModal.tsx:285 ~ ', {
+                    ...order,
+                    instructions,
+                  })
+                  addIngredient(newIngredientsArray)
+                  onClose()
+                  setIngredient(null)
+                  setPrice(null)
+                  setPriceKey(new Set(['0']))
+                }}
               >
-                Add to dish
+                Add to dish: {order && formatMoney(order?.amount)}
               </Button>
             )}
           </ModalFooter>

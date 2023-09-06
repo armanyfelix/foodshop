@@ -1,12 +1,13 @@
 'use client'
 
-import { Ingredient } from '@/types/ingredient'
+import { Dish, Ingredient } from '@/types/ingredient'
 import { Button, Tab, Tabs, useDisclosure } from '@nextui-org/react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Suspense, useEffect, useState } from 'react'
 import { create } from 'zustand'
 import AddFoodModal from './AddFoodModal'
 import CategoryCard from './CategoryCard'
+import DishModal from './DishModal'
 
 interface Tabs {
   key: string
@@ -15,24 +16,20 @@ interface Tabs {
 }
 
 type Store = {
-  dish: {
-    ingredients: Ingredient[]
-    price: number | null
-    recipe: any | null
-  }
+  dish: Dish
   addIngredient: (ingredients: Ingredient[]) => void
 }
 
-const useDishStore = create<Store>((set) => ({
+const useDishStore = create<Store>(() => ({
   dish: {
     ingredients: [],
-    price: null,
+    amount: null,
     recipe: null,
   },
-  addIngredient: (ingredients) => set((state) => ({ dish: { ...state.dish, ingredients: ingredients } })),
+  addIngredient: (ingredients) => ingredients,
 }))
 
-export default function TabsC() {
+export default function Groups() {
   const tabs = [
     {
       key: 'grain',
@@ -54,13 +51,14 @@ export default function TabsC() {
   const [ingredient, setIngredient] = useState<Ingredient | null>(null)
   const [ingredients, setIngredients] = useState<Ingredient[]>([])
   const [allIngredients, setAllIngredients] = useState<Ingredient[]>([])
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen: isFoodOpen, onOpen: onFoodOpen, onClose: onFoodClose } = useDisclosure()
+  const { isOpen: isDishOpen, onOpen: onDishOpen, onOpenChange: onDishOpenChange } = useDisclosure()
   const { dish, addIngredient } = useDishStore()
 
-  const handleOpen = (category: any) => {
-    const ingredientsData = allIngredients.filter((i: Ingredient) => i.type === category.key)
+  const handleFoodOpen = (category: any) => {
+    const ingredientsData = allIngredients.filter((i: Ingredient) => i.category === category.key)
     setIngredients(ingredientsData)
-    onOpen()
+    onFoodOpen()
   }
 
   useEffect(() => {
@@ -88,11 +86,11 @@ export default function TabsC() {
       >
         {(item: Tabs) => (
           <Tab key={item.key} title={item.title}>
-            <CategoryCard currentTab={item} handleOpen={handleOpen} />
+            <CategoryCard currentTab={item} handleOpen={handleFoodOpen} />
             <Suspense>
               <AddFoodModal
-                isOpen={isOpen}
-                onClose={onClose}
+                isOpen={isFoodOpen}
+                onClose={onFoodClose}
                 ingredients={ingredients}
                 setIngredient={setIngredient}
                 ingredient={ingredient}
@@ -104,10 +102,19 @@ export default function TabsC() {
         )}
       </Tabs>
       {dish && dish.ingredients.length > 0 && (
-        <div className="fixed bottom-5 right-1/2 z-50 w-96 translate-x-1/2">
-          <Button type="button" color="primary" radius="lg" size="lg" className="w-full">
+        <div className="fixed bottom-5 right-1/2 z-50 w-[90vw] translate-x-1/2">
+          <Button
+            type="button"
+            variant="shadow"
+            color="primary"
+            radius="lg"
+            size="lg"
+            className="w-full"
+            onPress={() => onDishOpen()}
+          >
             See Dish ({dish.ingredients.length})
           </Button>
+          <DishModal isOpen={isDishOpen} onOpenChange={onDishOpenChange} dish={dish} />
         </div>
       )}
     </>
