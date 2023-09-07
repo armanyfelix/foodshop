@@ -1,7 +1,7 @@
 export default function LockIcon(props) {
   return (
     <svg
-      aria-hidden="true"
+      ariaHidden="true"
       fill="none"
       focusable="false"
       height="1em"

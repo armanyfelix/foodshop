@@ -1,4 +1,6 @@
 import ChevronLeftIcon from '@/svg/ChevronLeftIcon'
+import LessIcon from '@/svg/LessIcon'
+import PlusIcon from '@/svg/PlusIcon'
 import SelectorIcon from '@/svg/SelectorIcon'
 import { Ingredient, Price } from '@/types/ingredient'
 import { formatMoney, unitAbrevation } from '@/utils/format'
@@ -30,7 +32,7 @@ interface Props {
   dish: any
 }
 
-export default function AddFoodModal({
+export default function FoodModal({
   isOpen,
   onClose,
   ingredients,
@@ -40,7 +42,7 @@ export default function AddFoodModal({
   dish,
 }: Props) {
   const [price, setPrice] = useState<Price | null>(null)
-  const [priceKey, setPriceKey] = useState<any>(new Set(['0']))
+  const [priceKey, setPriceKey] = useState<Set<string>>(new Set(['0']))
   const [instructions, setInstructions] = useState<string>('')
   const [quantity, setQuantity] = useState<number>(0)
   const [order, setOrder] = useState<any>(null)
@@ -181,15 +183,7 @@ export default function AddFoodModal({
                           onClick={() => onAdd(price?.by === 'weight' ? quantity - 50 : quantity - 1)}
                           className="h-12 w-12 rounded-2xl text-center ease-in hover:bg-zinc-700 active:scale-105 active:bg-zinc-800"
                         >
-                          <svg
-                            width="25"
-                            height="41"
-                            className="inline"
-                            viewBox="0 0 20 20"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path fill="#ffffff" d="M5 11a1 1 0 1 1 0-2h10a1 1 0 1 1 0 2H5Z" />
-                          </svg>
+                          <LessIcon width="25" height="41" />
                         </Button>
                         {ingredient && ingredient.prices?.length > 1 ? (
                           <div className="flex items-center">
@@ -237,18 +231,7 @@ export default function AddFoodModal({
                           onClick={() => onAdd(price?.by === 'weight' ? quantity + 50 : quantity + 1)}
                           className="h-12 w-12 rounded-2xl text-2xl ease-in hover:bg-zinc-700 active:scale-105 active:bg-zinc-800"
                         >
-                          <svg
-                            width="25"
-                            height="41"
-                            className="inline"
-                            viewBox="0 0 20 20"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <g fill="#ffffff">
-                              <path d="M5 11a1 1 0 1 1 0-2h10a1 1 0 1 1 0 2H5Z" />
-                              <path d="M9 5a1 1 0 0 1 2 0v10a1 1 0 1 1-2 0V5Z" />
-                            </g>
-                          </svg>
+                          <PlusIcon width="25" height="41" />
                         </Button>
                       </div>
                     </div>

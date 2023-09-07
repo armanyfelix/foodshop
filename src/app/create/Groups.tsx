@@ -5,9 +5,9 @@ import { Button, Tab, Tabs, useDisclosure } from '@nextui-org/react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Suspense, useEffect, useState } from 'react'
 import { create } from 'zustand'
-import AddFoodModal from './AddFoodModal'
 import CategoryCard from './CategoryCard'
 import DishModal from './DishModal'
+import FoodModal from './FoodModal'
 
 interface Tabs {
   key: string
@@ -18,15 +18,17 @@ interface Tabs {
 type Store = {
   dish: Dish
   addIngredient: (ingredients: Ingredient[]) => void
+  addDish: (dish: Dish) => void
 }
 
-const useDishStore = create<Store>(() => ({
+const useDishStore = create<Store>((set) => ({
   dish: {
     ingredients: [],
     amount: null,
     recipe: null,
   },
   addIngredient: (ingredients) => ingredients,
+  addDish: (newDish) => set(() => ({ dish: newDish })),
 }))
 
 export default function Groups() {
@@ -53,7 +55,7 @@ export default function Groups() {
   const [allIngredients, setAllIngredients] = useState<Ingredient[]>([])
   const { isOpen: isFoodOpen, onOpen: onFoodOpen, onClose: onFoodClose } = useDisclosure()
   const { isOpen: isDishOpen, onOpen: onDishOpen, onOpenChange: onDishOpenChange } = useDisclosure()
-  const { dish, addIngredient } = useDishStore()
+  const { dish, addIngredient, addDish } = useDishStore()
 
   const handleFoodOpen = (category: any) => {
     const ingredientsData = allIngredients.filter((i: Ingredient) => i.category === category.key)
@@ -88,7 +90,7 @@ export default function Groups() {
           <Tab key={item.key} title={item.title}>
             <CategoryCard currentTab={item} handleOpen={handleFoodOpen} />
             <Suspense>
-              <AddFoodModal
+              <FoodModal
                 isOpen={isFoodOpen}
                 onClose={onFoodClose}
                 ingredients={ingredients}
@@ -114,7 +116,7 @@ export default function Groups() {
           >
             See Dish ({dish.ingredients.length})
           </Button>
-          <DishModal isOpen={isDishOpen} onOpenChange={onDishOpenChange} dish={dish} />
+          <DishModal isOpen={isDishOpen} onOpenChange={onDishOpenChange} dish={dish} addDish={addDish} />
         </div>
       )}
     </>

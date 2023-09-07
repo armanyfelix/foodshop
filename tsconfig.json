@@ -23,6 +23,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/svg/SelectorIcon.jsx", "src/svg/DishIcon.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/svg/SelectorIcon.jsx", "src/svg/DishIcon.jsx", "src/svg/TrashIcon.jsx"],
   "exclude": ["node_modules"]
 }
