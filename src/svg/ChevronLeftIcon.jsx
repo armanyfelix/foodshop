@@ -3,7 +3,7 @@ export default function ChevronLeftIcon(props) {
     <svg width="1.5em" height="1.5em" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path
         fill="none"
-        stroke="#ffffff"
+        stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth="48"

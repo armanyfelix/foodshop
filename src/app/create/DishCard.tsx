@@ -1,12 +1,12 @@
 'use client'
 
 import LessIcon from '@/svg/LessIcon'
+import PlusIcon from '@/svg/PlusIcon'
 import SelectorIcon from '@/svg/SelectorIcon'
 import TrashIcon from '@/svg/TrashIcon'
-import { Dish, Price } from '@/types/ingredient'
+import { Dish } from '@/types/ingredient'
 import { formatMoney, unitAbrevation } from '@/utils/format'
 import { Button, Card, CardBody, Image, Select, SelectItem } from '@nextui-org/react'
-import { useEffect, useState } from 'react'
 
 interface Props {
   ingredient: any
@@ -15,17 +15,12 @@ interface Props {
 }
 
 export default function DishCard({ ingredient, addDish, dish }: Props) {
-  // const [price, setPrice] = useState<any>()
-  const [priceKey, setPriceKey] = useState<Set<string>>()
-
-  const editIngredient = (quantity: number) => {
-    let amount =
-      ingredient.price.by === 'weight'
-        ? (ingredient.price.amount / 1000) * quantity
-        : ingredient.price.amount * quantity
+  const editIngredient = (quantity: number, price = ingredient.price) => {
+    let amount = price.by === 'weight' ? (price.amount / 1000) * quantity : price.amount * quantity
     const newIngredient = {
       ...ingredient,
       quantity,
+      price,
       amount,
     }
     const key = dish.ingredients.findIndex((i: any) => i.ingredient.id === ingredient.ingredient.id)
@@ -34,14 +29,6 @@ export default function DishCard({ ingredient, addDish, dish }: Props) {
     addDish(newDish)
   }
   // const deleteIngredient = () => {}
-
-  useEffect(() => {
-    if (ingredient) {
-      const key = ingredient.ingredient.prices.findIndex((p: Price) => p.by === ingredient.price.by)
-      // setPrice(ingredient.price)
-      setPriceKey(new Set([key.toString()]))
-    }
-  }, [ingredient])
   return (
     <Card radius="none" shadow="sm">
       <CardBody>
@@ -72,7 +59,7 @@ export default function DishCard({ ingredient, addDish, dish }: Props) {
             >
               {(ingredient.price?.by === 'weight' && ingredient.quantity <= 50) ||
               ingredient.quantity <= 1 ? (
-                <TrashIcon width="15 " height="31" />
+                <TrashIcon width="15" height="31" className="text-red-500" />
               ) : (
                 <LessIcon />
               )}
@@ -84,8 +71,15 @@ export default function DishCard({ ingredient, addDish, dish }: Props) {
                   placeholder="unit"
                   size="sm"
                   radius="lg"
+                  disallowEmptySelection
                   selectionMode="single"
-                  selectedKeys={priceKey}
+                  selectedKeys={
+                    new Set([
+                      dish.ingredients
+                        .findIndex((i: any) => i.ingredient.id === ingredient.ingredient.id)
+                        .toString(),
+                    ])
+                  }
                   className="max-w-xs"
                   classNames={{
                     trigger: 'bg-transparent h-7 pl-1 pr-0 w-[43px]',
@@ -94,11 +88,12 @@ export default function DishCard({ ingredient, addDish, dish }: Props) {
                   }}
                   aria-labelledby="Format"
                   onSelectionChange={(e: any) => {
-                    setPriceKey(e)
-                    // const priceIterator = e.values()
-                    // const priceIndex = Number(priceIterator.next().value)
-                    // setPrice(ingredient?.prices[priceIndex])
-                    // onAdd(ingredient?.prices[priceIndex]?.by === 'weight' ? 50 : 1)
+                    const priceIterator = e.values()
+                    const priceIndex = Number(priceIterator.next().value)
+                    editIngredient(
+                      ingredient.ingredient.prices[priceIndex]?.by === 'weight' ? 50 : 1,
+                      ingredient.ingredient.prices[priceIndex]
+                    )
                   }}
                   selectorIcon={<SelectorIcon />}
                 >
@@ -125,18 +120,7 @@ export default function DishCard({ ingredient, addDish, dish }: Props) {
               }
               className="h-8 w-8 rounded-2xl text-2xl ease-in hover:bg-zinc-800"
             >
-              <svg
-                width="15"
-                height="31"
-                className="inline"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <g fill="#ffffff">
-                  <path d="M5 11a1 1 0 1 1 0-2h10a1 1 0 1 1 0 2H5Z" />
-                  <path d="M9 5a1 1 0 0 1 2 0v10a1 1 0 1 1-2 0V5Z" />
-                </g>
-              </svg>
+              <PlusIcon />
             </Button>
           </div>
           <h2>{formatMoney(ingredient.amount)}</h2>

@@ -192,6 +192,7 @@ export default function FoodModal({
                               placeholder="unit"
                               size="sm"
                               radius="lg"
+                              disallowEmptySelection
                               selectionMode="single"
                               selectedKeys={priceKey}
                               className="max-w-xs"
