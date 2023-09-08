@@ -4,7 +4,7 @@ import LessIcon from '@/svg/LessIcon'
 import PlusIcon from '@/svg/PlusIcon'
 import SelectorIcon from '@/svg/SelectorIcon'
 import TrashIcon from '@/svg/TrashIcon'
-import { Dish } from '@/types/ingredient'
+import { Dish, Price } from '@/types/ingredient'
 import { formatMoney, unitAbrevation } from '@/utils/format'
 import { Button, Card, CardBody, Image, Select, SelectItem } from '@nextui-org/react'
 
@@ -12,9 +12,10 @@ interface Props {
   ingredient: any
   dish: Dish
   addDish: (dish: Dish) => void
+  onClose: () => void
 }
 
-export default function DishCard({ ingredient, addDish, dish }: Props) {
+export default function DishCard({ ingredient, addDish, dish, onClose }: Props) {
   const editIngredient = (quantity: number, price = ingredient.price) => {
     let amount = price.by === 'weight' ? (price.amount / 1000) * quantity : price.amount * quantity
     const newIngredient = {
@@ -23,12 +24,20 @@ export default function DishCard({ ingredient, addDish, dish }: Props) {
       price,
       amount,
     }
-    const key = dish.ingredients.findIndex((i: any) => i.ingredient.id === ingredient.ingredient.id)
+    const index = dish.ingredients.findIndex((i: any) => i.ingredient.id === ingredient.ingredient.id)
     const newDish = dish
-    newDish.ingredients.splice(key, 1, newIngredient)
+    newDish.ingredients.splice(index, 1, newIngredient)
     addDish(newDish)
   }
-  // const deleteIngredient = () => {}
+  const deleteIngredient = () => {
+    const index = dish.ingredients.findIndex((i: any) => i.ingredient.id === ingredient.ingredient.id)
+    const newDish = dish
+    newDish.ingredients.splice(index, 1)
+    addDish(newDish)
+    if (newDish.ingredients.length === 0) {
+      onClose()
+    }
+  }
   return (
     <Card radius="none" shadow="sm">
       <CardBody>
@@ -41,7 +50,6 @@ export default function DishCard({ ingredient, addDish, dish }: Props) {
             className="h-14 object-cover"
             height={80}
             width={80}
-            shadow="lg"
             src={`/images/${ingredient.ingredient.group}s/${ingredient.ingredient.category}s/${ingredient.ingredient.image}`}
           />
         </div>
@@ -51,9 +59,11 @@ export default function DishCard({ ingredient, addDish, dish }: Props) {
               size="sm"
               isIconOnly
               onClick={() =>
-                editIngredient(
-                  ingredient.price?.by === 'weight' ? ingredient.quantity - 50 : ingredient.quantity - 1
-                )
+                (ingredient.price?.by === 'weight' && ingredient.quantity <= 50) || ingredient.quantity <= 1
+                  ? deleteIngredient()
+                  : editIngredient(
+                      ingredient.price?.by === 'weight' ? ingredient.quantity - 50 : ingredient.quantity - 1
+                    )
               }
               className="h-8 w-8 rounded-2xl text-center ease-in hover:bg-zinc-800"
             >
@@ -75,8 +85,8 @@ export default function DishCard({ ingredient, addDish, dish }: Props) {
                   selectionMode="single"
                   selectedKeys={
                     new Set([
-                      dish.ingredients
-                        .findIndex((i: any) => i.ingredient.id === ingredient.ingredient.id)
+                      ingredient.ingredient.prices
+                        .findIndex((price: Price) => price.by === ingredient.price.by)
                         .toString(),
                     ])
                   }
@@ -94,6 +104,7 @@ export default function DishCard({ ingredient, addDish, dish }: Props) {
                       ingredient.ingredient.prices[priceIndex]?.by === 'weight' ? 50 : 1,
                       ingredient.ingredient.prices[priceIndex]
                     )
+                    return e
                   }}
                   selectorIcon={<SelectorIcon />}
                 >

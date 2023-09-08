@@ -1,5 +1,5 @@
 import { Dish } from '@/types/ingredient'
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react'
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea } from '@nextui-org/react'
 import DishCard from './DishCard'
 
 interface Props {
@@ -19,7 +19,7 @@ export default function DishModal({ isOpen, onOpenChange, dish, addDish }: Props
       onOpenChange={onOpenChange}
       classNames={{
         // base: 'max-h-screen',
-        body: 'px-0 bg-blue gap-0',
+        body: 'p-0 bg-blue gap-0',
       }}
       motionProps={{
         variants: {
@@ -45,11 +45,31 @@ export default function DishModal({ isOpen, onOpenChange, dish, addDish }: Props
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1">Dish</ModalHeader>
+            <ModalHeader>Dish</ModalHeader>
             <ModalBody>
               {dish.ingredients.map((i: any) => (
-                <DishCard key={i.ingredient.id} ingredient={i} addDish={addDish} dish={dish} />
+                <DishCard
+                  key={i.ingredient.id}
+                  ingredient={i}
+                  addDish={addDish}
+                  dish={dish}
+                  onClose={onClose}
+                />
               ))}
+              <div className="my-4 flex flex-col justify-center space-y-4">
+                <Textarea
+                  label="Instructions"
+                  classNames={{
+                    label: 'font-bold',
+                    input: 'w-full',
+                  }}
+                  labelPlacement="outside"
+                  // value={instructions}
+                  // onValueChange={setInstructions}
+                  placeholder="Specify how you want your food to be cooked or served"
+                  minRows={3}
+                />
+              </div>
             </ModalBody>
             <ModalFooter>
               <Button color="danger" variant="light" onPress={onClose}>

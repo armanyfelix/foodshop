@@ -110,14 +110,13 @@ export default function FoodModal({
             {ingredient ? (
               <div>
                 <Image
-                  // radius="none"
                   width="100%"
                   className="h-[200px] w-full object-cover"
                   removeWrapper
                   src={`/images/${ingredient.group}s/${ingredient.category}s/${ingredient.image}`}
                 />
                 <div className="px-5">
-                  <div className="mb-5">
+                  <div className="mb-5 mt-3">
                     <h1 className="mb-3 text-3xl font-bold">{ingredient.name}</h1>
                     <p>{ingredient.description}</p>
                   </div>
@@ -138,7 +137,6 @@ export default function FoodModal({
                       </ul>
                     ))}
                   </div>
-                  {/* <Divider /> */}
                   <Accordion variant="shadow">
                     <AccordionItem key="1" aria-label="Nutrition Facts" title="Nutrition Facts">
                       <ul className="my-4 flex flex-col justify-center space-y-4">
@@ -154,21 +152,18 @@ export default function FoodModal({
                       </ul>
                     </AccordionItem>
                   </Accordion>
-                  {/* <Divider /> */}
-                  <div className="my-4 flex flex-col justify-center space-y-4">
-                    <Textarea
-                      label="Instructions"
-                      classNames={{
-                        label: 'font-bold',
-                        input: 'w-full',
-                      }}
-                      labelPlacement="outside"
-                      value={instructions}
-                      onValueChange={setInstructions}
-                      placeholder="Specify how you want your food to be cooked or served"
-                      minRows={3}
-                    />
-                  </div>
+                  <Textarea
+                    label="Instructions"
+                    classNames={{
+                      label: 'font-bold',
+                      input: 'w-full',
+                    }}
+                    labelPlacement="outside"
+                    value={instructions}
+                    onValueChange={setInstructions}
+                    placeholder="Specify how you want your food to be cooked or served"
+                    minRows={3}
+                  />
                   {quantity > 0 && (
                     <div className="flex items-center justify-between">
                       <div className="mx-auto flex rounded-2xl bg-zinc-600">

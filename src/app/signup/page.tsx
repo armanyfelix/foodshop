@@ -1,38 +1,29 @@
+import { revalidatePath } from 'next/cache'
 import Form from './Form'
 
 export default function signup() {
-  const handleSignUp = async (e: any) => {
+  async function onSignup(e: FormData) {
     'use server'
 
-    const email = e.get('email')
-    const password = e.get('password')
-
-    fetch('/auth/signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data)
+    // const email = e.get('email')
+    // const password = e.get('password')
+    try {
+      const res = await fetch('http://localhost:3000/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'form-data' },
+        body: e,
       })
-      .catch((err) => {
-        console.log(err)
-      })
+      revalidatePath('/')
+      return res
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   return (
     <div className="h-screen w-full p-6">
-      {/* <input name="email" onChange={(e) => setEmail(e.target.value)} value={email} />
-      <input type="password" name="password" onChange={(e) => setPassword(e.target.value)} value={password} />
-      <button onClick={handleSignUp}>Sign up</button> */}
-      {/* <button onClick={handleSignIn}>Sign in</button> */}
-      {/* <button onClick={handleSignOut}>Sign out</button> */}
-      <h1 className="mt-24 w-full pb-28 text-center text-6xl font-bold text-default-500">Sign Up</h1>
-      <Form handleSignUp={handleSignUp} />
+      <h1 className="mb-9 text-center text-5xl font-bold text-default-500">Sign Up</h1>
+      <Form onSignup={onSignup} />
     </div>
   )
 }

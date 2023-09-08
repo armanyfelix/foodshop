@@ -1,7 +1,7 @@
 export default function MailIcon(props) {
   return (
     <svg
-      ariaHidden="true"
+      // ariaHidden="true"
       fill="none"
       focusable="false"
       height="1em"

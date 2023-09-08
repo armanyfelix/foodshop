@@ -4,39 +4,46 @@ import LockIcon from '@/svg/LockIcon'
 import MailIcon from '@/svg/MainIcon'
 import { Button, Input, Link } from '@nextui-org/react'
 import { useMemo, useState } from 'react'
+import { experimental_useFormStatus as useFormStatus } from 'react-dom'
 
 interface Props {
-  handleSignUp: (e: any) => void
+  onSignup: (e: any) => void
 }
 
-export default function Form({ handleSignUp }: Props) {
+export default function Form({ onSignup }: Props) {
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
+  const { pending } = useFormStatus()
 
   const validationEmail = useMemo(() => {
     if (email === '') return undefined
-
     return email.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i) ? 'valid' : 'invalid'
   }, [email])
 
   const validationPassword = useMemo(() => {
     if (password === '') return undefined
+    return password.length >= 8 ? 'valid' : 'invalid'
+  }, [password])
 
-    return password.length > 8 ? 'valid' : 'invalid'
-  }, [email])
+  async function handleSignUp(e: FormData) {
+    // if (validationPassword === 'valid' && validationEmail === 'valid') {
+    const res = await onSignup(e)
+    console.log('🚀 ~ file: Form.tsx:31 ~ handleSignUp ~ res:', res)
+  }
 
   return (
-    <form action={handleSignUp} method="post" className="mx-auto max-w-xl space-y-10 text-center">
+    <form action={handleSignUp} className="mx-auto max-w-xl space-y-6 text-center">
       <Input
         autoFocus
         name="email"
         endContent={<MailIcon className="pointer-events-none flex-shrink-0 text-2xl text-default-400" />}
         label="Email"
         variant="faded"
+        isRequired
         color={validationEmail === 'invalid' ? 'danger' : 'default'}
         errorMessage={validationEmail === 'invalid' && 'Please enter a valid email'}
         validationState={validationEmail}
-        onChange={(e) => setEmail(e.target.value)}
+        onValueChange={setEmail}
         value={email}
       />
       <Input
@@ -45,18 +52,25 @@ export default function Form({ handleSignUp }: Props) {
         label="Password"
         type="password"
         variant="faded"
+        isRequired
         color={validationPassword === 'invalid' ? 'danger' : 'default'}
-        errorMessage={validationPassword === 'invalid' && 'Please enter a valid password'}
+        errorMessage={validationPassword === 'invalid' && 'The password must be at least 8 characters'}
         validationState={validationPassword}
-        onChange={(e) => setPassword(e.target.value)}
+        onValueChange={setPassword}
         value={password}
       />
-      <Link href="/auth/forgot-password">
+      <Link href="/forgot-password">
         <span className="text-default-500">Forgot password?</span>
       </Link>
-      <Button color="primary" className="w-full" size="lg" type="submit">
-        Sign in
+      <Button color="primary" className="w-full" isLoading={pending} size="lg" type="submit">
+        Sign Up
       </Button>
+      <div>
+        <span>Already have an account? </span>
+        <Link href="/signin">
+          <span className="text-default-500">sign in</span>
+        </Link>
+      </div>
     </form>
   )
 }
