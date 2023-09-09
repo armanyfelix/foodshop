@@ -22,7 +22,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang="en">
       <body className="bg-gradient-to-bl from-orange-300 to-cyan-300 dark:from-orange-950 dark:to-cyan-950 ">
         <Providers>
-          <Header session={session} />
+          <Header user={session?.user || null} />
           {children}
         </Providers>
       </body>

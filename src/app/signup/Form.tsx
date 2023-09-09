@@ -1,15 +1,20 @@
 'use client'
 
+import { useUserStore } from '@/store/session'
 import LockIcon from '@/svg/LockIcon'
 import MailIcon from '@/svg/MainIcon'
 import { Button, Input, Link } from '@nextui-org/react'
 import { revalidatePath } from 'next/cache'
-import { useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useMemo, useState } from 'react'
 import { experimental_useFormStatus as useFormStatus } from 'react-dom'
 
 export default function Form() {
+  const user = useUserStore((state: any) => state.user)
+  const router = useRouter()
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
+  const [sucess, setSuccess] = useState<boolean | null>(null)
   const { pending } = useFormStatus()
 
   const validationEmail = useMemo(() => {
@@ -22,25 +27,44 @@ export default function Form() {
     return password.length >= 8 ? 'valid' : 'invalid'
   }, [password])
 
-  async function handleSignUp(e: FormData) {
+  async function handleSignUp(formData: FormData) {
     try {
       const res = await fetch('/auth/signup', {
         method: 'POST',
-        headers: { 'Content-Type': 'form-data' },
-        body: e,
+        // headers: { 'Content-Type': 'multipart/form-data;' },
+        body: formData,
       })
+      if (res.status === 500) {
+        setSuccess(false)
+      } else {
+        setSuccess(true)
+      }
       revalidatePath('/')
     } catch (err) {
       console.log(err)
     }
   }
 
+  useEffect(() => {
+    if (user) {
+      router.push('/')
+    }
+  }, [user])
+
   return (
     <form action={handleSignUp} className="mx-auto max-w-xl space-y-6 text-center">
-      <div className="mt-4 rounded-xl border-2 border-green-600 p-2 text-center text-green-600">
-        <h2 className="text-lg font-semibold">Sign up success!</h2>
-        <p className="text-sm">Please check your email to confirm your account.</p>
-      </div>
+      {sucess && (
+        <div className="mt-4 rounded-xl border-2 border-success-600 p-2 text-center text-success-600">
+          <h2 className="text-lg font-semibold">Sign up success!</h2>
+          <p className="text-sm">Please check your email to confirm your account.</p>
+        </div>
+      )}
+      {sucess === false && (
+        <div className="mt-4 rounded-xl border-2 border-danger-600 p-2 text-center text-danger-600">
+          <h2 className="text-lg font-semibold">Sign up failed</h2>
+          <p className="text-sm">Something went wrong. Please check your email and password again.</p>
+        </div>
+      )}
       <Input
         autoFocus
         name="email"
@@ -67,9 +91,6 @@ export default function Form() {
         onValueChange={setPassword}
         value={password}
       />
-      <Link href="/forgot-password">
-        <span className="text-default-500">Forgot password?</span>
-      </Link>
       <Button color="primary" className="w-full" isLoading={pending} size="lg" type="submit">
         Sign Up
       </Button>

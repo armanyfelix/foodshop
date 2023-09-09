@@ -8,7 +8,6 @@ export const dynamic = 'force-dynamic'
 
 export async function POST(req: Request) {
   const reqUrl = new URL(req.url)
-  console.log('🚀 ~ file: route.ts:11 ~ POST ~ reqUrl:', reqUrl)
   const formData = await req.formData()
   const email = String(formData.get('email'))
   const password = String(formData.get('password'))

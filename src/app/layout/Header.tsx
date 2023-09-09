@@ -15,17 +15,21 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+import { useUserStore } from '@/store/session'
 import type { Database } from '@/types/database.types'
 
 interface Props {
-  session: object | null
+  user: object | null
 }
 
-export default function Header({ session }: Props) {
+export default function Header({ user }: Props) {
+  const setUser = useUserStore((state: any) => state.setUser)
   const [isMenuOpen, setIsMenuOpen] = useState<Boolean>(false)
   // const { theme, setTheme } = useTheme()
   const router = useRouter()
   const supabase = createClientComponentClient<Database>()
+
+  setUser(user)
 
   const menuItems = [
     'Profile',
@@ -63,10 +67,16 @@ export default function Header({ session }: Props) {
         // ],
       }}
     >
-      <NavbarContent className="sm:hidden">
-        <NavbarMenuToggle aria-label={isMenuOpen ? 'Close menu' : 'Open menu'} />
-      </NavbarContent>
-      <NavbarContent justify="start">
+      {user ? (
+        <NavbarContent className="sm:hidden" justify="start">
+          <NavbarMenuToggle aria-label={isMenuOpen ? 'Close menu' : 'Open menu'} />
+        </NavbarContent>
+      ) : (
+        <NavbarContent className="flex scale-90 md:hidden md:scale-100" justify="start">
+          <Link href="/signin">Sign In</Link>
+        </NavbarContent>
+      )}
+      <NavbarContent justify="center">
         <Link href="/">
           <NavbarBrand>
             <h1 className="bg-gradient-to-br from-orange-400 to-indigo-400 bg-clip-text font-mono text-xl font-bold text-transparent sm:text-4xl">
@@ -132,7 +142,7 @@ export default function Header({ session }: Props) {
           </Dropdown>
         ) : (
           <> */}
-        {!session && (
+        {!user && (
           <>
             <NavbarItem className="hidden md:flex">
               <Link href="/signin">Sign In</Link>
