@@ -27,13 +27,6 @@ export default function Header({ session }: Props) {
   const router = useRouter()
   const supabase = createClientComponentClient<Database>()
 
-  // const avatar = useMemo(() => {
-  //   return createAvatar(lorelei, {
-  //     size: 228,
-  //     // ... other options
-  //   }).toDataUriSync()
-  // }, [])
-
   const menuItems = [
     'Profile',
     'Home',
@@ -139,17 +132,18 @@ export default function Header({ session }: Props) {
           </Dropdown>
         ) : (
           <> */}
-        <NavbarItem className="hidden md:flex">
-          <Link href="/signin">Sign In</Link>
-        </NavbarItem>
-        <NavbarItem className="scale-75 md:scale-100">
-          <Button as={Link} size="lg" color="primary" href="/signup" radius="lg" variant="flat">
-            Sign Up
-          </Button>
-        </NavbarItem>
-        {/*    </>
-  )
-}  */}
+        {!session && (
+          <>
+            <NavbarItem className="hidden md:flex">
+              <Link href="/signin">Sign In</Link>
+            </NavbarItem>
+            <NavbarItem className="scale-75 md:scale-100">
+              <Button as={Link} size="lg" color="primary" href="/signup" radius="lg" variant="flat">
+                Sign Up
+              </Button>
+            </NavbarItem>
+          </>
+        )}
       </NavbarContent>
       <NavbarMenu>
         {menuItems.map((item, index) => (

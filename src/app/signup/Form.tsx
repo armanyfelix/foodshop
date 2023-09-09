@@ -3,14 +3,11 @@
 import LockIcon from '@/svg/LockIcon'
 import MailIcon from '@/svg/MainIcon'
 import { Button, Input, Link } from '@nextui-org/react'
+import { revalidatePath } from 'next/cache'
 import { useMemo, useState } from 'react'
 import { experimental_useFormStatus as useFormStatus } from 'react-dom'
 
-interface Props {
-  onSignup: (e: any) => void
-}
-
-export default function Form({ onSignup }: Props) {
+export default function Form() {
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const { pending } = useFormStatus()
@@ -26,13 +23,24 @@ export default function Form({ onSignup }: Props) {
   }, [password])
 
   async function handleSignUp(e: FormData) {
-    // if (validationPassword === 'valid' && validationEmail === 'valid') {
-    const res = await onSignup(e)
-    console.log('🚀 ~ file: Form.tsx:31 ~ handleSignUp ~ res:', res)
+    try {
+      const res = await fetch('/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'form-data' },
+        body: e,
+      })
+      revalidatePath('/')
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   return (
     <form action={handleSignUp} className="mx-auto max-w-xl space-y-6 text-center">
+      <div className="mt-4 rounded-xl border-2 border-green-600 p-2 text-center text-green-600">
+        <h2 className="text-lg font-semibold">Sign up success!</h2>
+        <p className="text-sm">Please check your email to confirm your account.</p>
+      </div>
       <Input
         autoFocus
         name="email"
