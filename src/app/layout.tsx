@@ -2,11 +2,12 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import { ReactNode } from 'react'
+import Header from '../components/layout/Header'
 import './globals.css'
-import Header from './layout/Header'
 import { Providers } from './providers'
 
 export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Cookshop',
   description: 'Shop of food',
