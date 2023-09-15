@@ -114,6 +114,7 @@ export default function FoodModal({
                   className="h-[200px] w-full object-cover"
                   removeWrapper
                   src={`/images/${ingredient.group}s/${ingredient.category}s/${ingredient.image}`}
+                  alt={ingredient.image}
                 />
                 <div className="px-5">
                   <div className="mb-5 mt-3">

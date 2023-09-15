@@ -2,10 +2,11 @@
 
 import { spoonacularKey } from '@/constants/constants'
 
-export async function handleSearch() {
+export async function search(fd: FormData) {
+  const query = fd.get('search')
   try {
     const res = await fetch(
-      `https://api.spoonacular.com/recipes/complexSearch?apiKey=${spoonacularKey}&query=pasta`,
+      `https://api.spoonacular.com/recipes/complexSearch?apiKey=${spoonacularKey}&query=${query}`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -13,8 +14,28 @@ export async function handleSearch() {
       }
     )
     const data = res.json()
-    console.log(data)
+    // revalidatePath('/')
+    return data
   } catch (error) {
-    console.error(error)
+    return error
+  }
+}
+
+export async function getRandomRecipes() {
+  try {
+    const res = await fetch(
+      `https://api.spoonacular.com/recipes/random?apiKey=${spoonacularKey}&limitLicense=false&number=12&tags=mexican`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        // cache: 'force-cache' // active for testing for the limit of request on the free plan
+      }
+    )
+    const data = await res.json()
+    // revalidatePath('/')
+    return data
+  } catch (error) {
+    return error
   }
 }
